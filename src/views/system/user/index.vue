@@ -53,6 +53,8 @@ const {
     nickName: null,
     phonenumber: null,
     status: null,
+    orderByColumn: null,
+    isAsc: null,
     params: {}
   },
   columns: () => [
@@ -69,34 +71,43 @@ const {
     },
     {
       key: 'userName',
+      property: 'user_name',
       title: $t('page.system.user.userName'),
       align: 'center',
       minWidth: 120,
-      ellipsis: true
+      ellipsis: true,
+      sorter: true
     },
     {
       key: 'nickName',
+      property: 'nick_name',
       title: $t('page.system.user.nickName'),
       align: 'center',
       minWidth: 120,
-      ellipsis: true
+      ellipsis: true,
+      sorter: true
     },
     {
       key: 'deptName',
+      property: 'dept_name',
       title: $t('page.system.user.deptName'),
       align: 'center',
       minWidth: 120,
-      ellipsis: true
+      ellipsis: true,
+      sorter: true
     },
     {
       key: 'phonenumber',
+      property: 'phonenumber',
       title: $t('page.system.user.phonenumber'),
       align: 'center',
       minWidth: 120,
-      ellipsis: true
+      ellipsis: true,
+      sorter: true
     },
     {
       key: 'status',
+      property: 'status',
       title: $t('page.system.user.status'),
       align: 'center',
       minWidth: 80,
@@ -109,13 +120,16 @@ const {
             onSubmitted={(value, callback) => handleStatusChange(row, value, callback)}
           />
         );
-      }
+      },
+      sorter: true
     },
     {
       key: 'createTime',
+      property: 'create_time',
       title: $t('page.system.user.createTime'),
       align: 'center',
-      minWidth: 120
+      minWidth: 120,
+      sorter: true
     },
     {
       key: 'operate',
@@ -181,6 +195,21 @@ const {
     }
   ]
 });
+
+function handleSortChange(sorter: { columnKey: string; order: 'ascend' | 'descend' | false }) {
+  const column = columns.value.find(col => (col as any)?.key === sorter.columnKey);
+  const sortKey = (column as any)?.property ?? sorter.columnKey;
+
+  if (sorter.order) {
+    searchParams.orderByColumn = sortKey;
+    searchParams.isAsc = sorter.order === 'ascend' ? 'asc' : 'desc';
+  } else {
+    searchParams.orderByColumn = null;
+    searchParams.isAsc = null;
+  }
+
+  getDataByPage(searchParams.pageNum ?? 1);
+}
 
 const { drawerVisible, operateType, editingData, handleAdd, handleEdit, checkedRowKeys, onBatchDeleted, onDeleted } =
   useTableOperate(data, getData);
@@ -347,6 +376,7 @@ function handleResetSearch() {
           :row-key="row => row.userId"
           :pagination="mobilePagination"
           class="h-full"
+          @update:sorter="handleSortChange"
         />
         <UserImportModal v-model:visible="importVisible" @submitted="getDataByPage" />
         <UserOperateDrawer

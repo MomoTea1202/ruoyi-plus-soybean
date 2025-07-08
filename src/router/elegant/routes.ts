@@ -294,6 +294,15 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'system_user',
           i18nKey: 'route.system_user'
         }
+      },
+      {
+        name: 'system_usr-perm',
+        path: '/system/usr-perm',
+        component: 'view.system_usr-perm',
+        meta: {
+          title: 'system_usr-perm',
+          i18nKey: 'route.system_usr-perm'
+        }
       }
     ]
   },

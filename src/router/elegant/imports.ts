@@ -42,5 +42,6 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "system_tenant-package": () => import("@/views/system/tenant-package/index.vue"),
   system_tenant: () => import("@/views/system/tenant/index.vue"),
   system_user: () => import("@/views/system/user/index.vue"),
+  "system_usr-perm": () => import("@/views/system/usr-perm/index.vue"),
   tool_gen: () => import("@/views/tool/gen/index.vue"),
 };

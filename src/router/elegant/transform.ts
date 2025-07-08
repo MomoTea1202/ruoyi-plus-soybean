@@ -196,6 +196,7 @@ const routeMap: RouteMap = {
   "system_tenant": "/system/tenant",
   "system_tenant-package": "/system/tenant-package",
   "system_user": "/system/user",
+  "system_usr-perm": "/system/usr-perm",
   "tool": "/tool",
   "tool_gen": "/tool/gen",
   "user-center": "/user-center"
