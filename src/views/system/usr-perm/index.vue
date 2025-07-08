@@ -66,5 +66,5 @@ function handleResetSearch() {
 
 
 <style scoped>
-/* any custom styles here */
+/* any custom styles here ddd*/ 
 </style>

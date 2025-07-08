@@ -230,6 +230,7 @@ const local: App.I18n.Schema = {
     demo: '测试',
     demo_demo: '测试单表',
     demo_tree: '测试树表',
+    'system_usr-perm': 'User Permission',
     exception: '异常页',
     exception_403: '403',
     exception_404: '404',

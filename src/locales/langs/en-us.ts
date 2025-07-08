@@ -227,6 +227,7 @@ const local: App.I18n.Schema = {
     monitor_online: 'Online User',
     'user-center': 'User Center',
     system_role: 'Role Management',
+    'system_usr-perm': 'User Permission',
     demo: 'Demo',
     demo_demo: 'Demo Table',
     demo_tree: 'Demo Tree',
