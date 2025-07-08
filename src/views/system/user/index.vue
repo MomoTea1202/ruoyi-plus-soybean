@@ -77,7 +77,7 @@ const {
       align: 'center',
       minWidth: 120,
       ellipsis: true,
-      sorter: true
+      sorter: false
     },
     {
       key: 'nickName',
