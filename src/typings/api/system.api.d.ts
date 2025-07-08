@@ -699,13 +699,15 @@ declare namespace Api {
         | 'status'
       >
     >;
-type Perm = Common.CommonRecord<{
-    userName: string
-  userPerm:  string
+    type Perm = Common.CommonRecord<{
+      userName: string;
+      userPerm: string;
     }>;
-type UsrPermList = Api.Common.PaginatingQueryRecord<Perm>;
+    type UsrPermList = Api.Common.PaginatingQueryRecord<Perm>;
 
-type UsrPermSearchParams = CommonType.RecordNullable<Pick<Perm, 'userName' | 'userPerm' >  & Common.CommonSearchParams>;
+    type UsrPermSearchParams = CommonType.RecordNullable<
+      Pick<Perm, 'userName' | 'userPerm'> & Common.CommonSearchParams
+    >;
 
     /** client list */
     type ClientList = Api.Common.PaginatingQueryRecord<Client>;

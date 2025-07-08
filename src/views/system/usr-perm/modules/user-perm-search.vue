@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 
@@ -16,13 +15,9 @@ const emit = defineEmits<Emits>();
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
 
-
-
 const model = defineModel<Api.System.UsrPermSearchParams>('model', { required: true });
 
-
 async function reset() {
-
   await restoreValidation();
   emit('reset');
 }
@@ -39,14 +34,13 @@ async function search() {
       <NCollapseItem :title="$t('common.search')" name="user-perm-search">
         <NForm ref="formRef" :model="model" label-placement="left" :label-width="80">
           <NGrid responsive="screen" item-responsive>
-            <NFormItemGi span="24 s:12 m:6" label='username' path="userName" class="pr-24px">
+            <NFormItemGi span="24 s:12 m:6" label="username" path="userName" class="pr-24px">
               <NInput v-model:value="model.userName" placeholder="input username" />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" label="user permission" path="nickName" class="pr-24px">
               <NInput v-model:value="model.userPerm" placeholder="input perm" />
             </NFormItemGi>
-            
-            
+
             <NFormItemGi span="24 s:12 m:12" class="pr-24px">
               <NSpace class="w-full" justify="end">
                 <NButton @click="reset">

@@ -8,4 +8,3 @@ export function fetchGetUserPermList(params?: Api.System.UsrPermSearchParams) {
     params
   });
 }
-

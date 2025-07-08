@@ -1,30 +1,21 @@
 <script setup lang="tsx">
-import { onMounted } from 'vue'
-import { fetchGetUserPermList } from '@/service/api/system'
-import { useTable, useTableOperate } from '@/hooks/common/table'
-import { $t } from '@/locales'
-import UserPermSearch from './modules/user-perm-search.vue';
-import { useAuth } from '@/hooks/business/auth';
+import { onMounted } from 'vue';
+import { fetchGetUserPermList } from '@/service/api/system';
 import { useAppStore } from '@/store/modules/app';
+import { useTable, useTableOperate } from '@/hooks/common/table';
+import { useAuth } from '@/hooks/business/auth';
+import { $t } from '@/locales';
+import UserPermSearch from './modules/user-perm-search.vue';
 
-defineOptions({ name: 'UserPermList' })
+defineOptions({ name: 'UserPermList' });
 
 const { hasAuth } = useAuth();
 const appStore = useAppStore();
 
-const {
-  columns,
-  data,
-  loading,
-  mobilePagination,
-  getData,
-  getDataByPage,
-  searchParams,
-  resetSearchParams
-} = useTable({
+const { columns, data, loading, mobilePagination, getData, getDataByPage, searchParams, resetSearchParams } = useTable({
   apiFn: fetchGetUserPermList,
   apiParams: {
-    pageNum:  1,
+    pageNum: 1,
     pageSize: 10,
     userName: null,
     userPerm: null
@@ -36,8 +27,7 @@ const {
     { key: 'userPerm', title: 'User Permission', align: 'center', minWidth: 120 }
   ]
 });
-const { checkedRowKeys} =
-  useTableOperate(data, getData);
+const { checkedRowKeys } = useTableOperate(data, getData);
 function handleResetSearch() {
   resetSearchParams();
 }
@@ -45,26 +35,23 @@ function handleResetSearch() {
 
 <template>
   <div class="h-full flex-col-stretch gap-12px overflow-hidden lt-sm:overflow-auto">
-  <UserPermSearch v-model:model="searchParams" @reset="handleResetSearch" @search="getDataByPage" />
-  <NDataTable
-          v-model:checked-row-keys="checkedRowKeys"
-          :columns="columns"
-          :data="data"
-          size="small"
-          :flex-height="!appStore.isMobile"
-          :scroll-x="962"
-          :loading="loading"
-          remote
-          :row-key="row => row.userId"
-          :pagination="mobilePagination"
-          class="h-full"
-        />
-</div>
-  
-  
+    <UserPermSearch v-model:model="searchParams" @reset="handleResetSearch" @search="getDataByPage" />
+    <NDataTable
+      v-model:checked-row-keys="checkedRowKeys"
+      :columns="columns"
+      :data="data"
+      size="small"
+      :flex-height="!appStore.isMobile"
+      :scroll-x="962"
+      :loading="loading"
+      remote
+      :row-key="row => row.userId"
+      :pagination="mobilePagination"
+      class="h-full"
+    />
+  </div>
 </template>
 
-
 <style scoped>
-/* any custom styles here ddd*/ 
+/* any custom styles here ddd*/
 </style>
