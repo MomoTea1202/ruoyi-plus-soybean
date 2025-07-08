@@ -46,16 +46,17 @@ const {
   apiParams: {
     pageNum: 1,
     pageSize: 10,
-    // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
-    // the value can not be undefined, otherwise the property in Form will not be reactive
-    deptId: null,
-    userName: null,
-    nickName: null,
-    phonenumber: null,
-    status: null,
     orderByColumn: null,
     isAsc: null,
-    params: {}
+    params: {
+      // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
+      // the value can not be undefined, otherwise the property in Form will not be reactive
+      deptId: null,
+      userName: null,
+      nickName: null,
+      phonenumber: null,
+      status: null
+    }
   },
   columns: () => [
     {
@@ -255,7 +256,9 @@ async function getTreeData() {
 getTreeData();
 
 function handleClickTree(keys: string[]) {
-  searchParams.deptId = keys.length ? keys[0] : null;
+  if (searchParams.params) {
+    searchParams.params.deptId = keys.length ? keys[0] : null;
+  }
   checkedRowKeys.value = [];
   getDataByPage();
 }
@@ -384,7 +387,7 @@ function handleResetSearch() {
           :operate-type="operateType"
           :row-data="editingData"
           :dept-data="deptData"
-          :dept-id="searchParams.deptId"
+          :dept-id="searchParams.params?.deptId"
           @submitted="getDataByPage"
         />
         <UserPasswordDrawer v-model:visible="passwordVisible" :row-data="editingData" />
