@@ -79,6 +79,6 @@ export async function gitCommitVerify(lang: Lang = 'en-us', ignores: RegExp[] = 
   if (!REG_EXP.test(commitMsg)) {
     const errorMsg = locales[lang].gitCommitVerify;
 
-    console.warn(errorMsg);
+    throw new Error(errorMsg);
   }
 }
