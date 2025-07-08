@@ -1,15 +1,11 @@
 <script setup lang="tsx">
-import { onMounted } from 'vue';
 import { fetchGetUserPermList } from '@/service/api/system';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import { useAuth } from '@/hooks/business/auth';
-import { $t } from '@/locales';
 import UserPermSearch from './modules/user-perm-search.vue';
 
 defineOptions({ name: 'UserPermList' });
 
-const { hasAuth } = useAuth();
 const appStore = useAppStore();
 
 const { columns, data, loading, mobilePagination, getData, getDataByPage, searchParams, resetSearchParams } = useTable({
@@ -22,7 +18,7 @@ const { columns, data, loading, mobilePagination, getData, getDataByPage, search
   },
   columns: () => [
     { type: 'selection', align: 'center', width: 48 },
-    { key: 'index', title: $t('common.index'), align: 'center', width: 64 },
+    { key: 'index', title: 'index', align: 'center', width: 64 },
     { key: 'userName', title: 'User Name', align: 'center', minWidth: 120 },
     { key: 'userPerm', title: 'User Permission', align: 'center', minWidth: 120 }
   ]
@@ -53,5 +49,5 @@ function handleResetSearch() {
 </template>
 
 <style scoped>
-/* any custom styles here ddd*/
+/* any custom styles here*/
 </style>
