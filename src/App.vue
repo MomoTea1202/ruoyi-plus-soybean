@@ -38,7 +38,7 @@ const watermarkProps = computed<WatermarkProps>(() => {
     fontSize: 14,
     fontColor: themeStore.darkMode ? 'rgba(200, 200, 200, 0.03)' : 'rgba(200, 200, 200, 0.2)',
     lineHeight: 14,
-    width: 201,
+    width: 200,
     height: 300,
     xOffset: 12,
     yOffset: 60,
