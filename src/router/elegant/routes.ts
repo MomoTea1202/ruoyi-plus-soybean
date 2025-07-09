@@ -269,6 +269,15 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'system_sub-user',
+        path: '/system/sub-user',
+        component: 'view.system_sub-user',
+        meta: {
+          title: 'system_sub-user',
+          i18nKey: 'route.system_sub-user'
+        }
+      },
+      {
         name: 'system_tenant',
         path: '/system/tenant',
         component: 'view.system_tenant',
