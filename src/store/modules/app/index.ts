@@ -5,7 +5,8 @@ import { useBoolean } from '@sa/hooks';
 import { router } from '@/router';
 import { localStg } from '@/utils/storage';
 import { SetupStoreId } from '@/enum';
-import { $t, setLocale } from '@/locales';
+import { $t } from '@/locales';
+import { changeLanguage } from '@/locales/useLanguage';
 import { setDayjsLocale } from '@/locales/dayjs';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
@@ -65,9 +66,9 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     }
   ];
 
-  function changeLocale(lang: App.I18n.LangType) {
+  async function changeLocale(lang: App.I18n.LangType) {
     locale.value = lang;
-    setLocale(lang);
+    await changeLanguage(lang);
     localStg.set('lang', lang);
   }
 

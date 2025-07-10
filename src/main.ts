@@ -21,7 +21,7 @@ async function setupApp() {
 
   await setupRouter(app);
 
-  setupI18n(app);
+  await setupI18n(app);
 
   setupAppVersionNotification();
 
