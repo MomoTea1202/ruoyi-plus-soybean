@@ -32,6 +32,7 @@ const tooltipContent = computed(() => {
 });
 
 /** Add bottom margin to all options except the last one for proper visual separation */
+/** Add bottom margin to all options except the last one for proper visual separation */
 const dropdownOptions = computed(() => {
   const lastIndex = props.langOptions.length - 1;
 
