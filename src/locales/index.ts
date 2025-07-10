@@ -36,7 +36,6 @@ export async function setupI18n(app: App) {
 // ✅ Smart overload-safe helper
 export const $t = (key: string, params?: Record<string, unknown>) => {
   if (!i18n) {
-    console.warn('[i18n] $t called before setupI18n() — returning key as fallback');
     return key;
   }
 

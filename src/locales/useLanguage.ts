@@ -1,9 +1,7 @@
-import { useI18n } from 'vue-i18n';
 import { loadLocaleMessages } from '@/locales';
 
-export async function changeLanguage(lang: string) {
-  const { locale } = useI18n();
+export async function changeLanguage(lang: string, setLang: (lang: string) => void) {
   await loadLocaleMessages(lang);
-  locale.value = lang;
+  setLang(lang); // externally set locale.value = lang
   localStorage.setItem('lang', lang);
 }

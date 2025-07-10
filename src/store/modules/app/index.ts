@@ -2,17 +2,19 @@ import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue';
 import { breakpointsTailwind, useBreakpoints, useEventListener, useTitle } from '@vueuse/core';
 import { defineStore } from 'pinia';
 import { useBoolean } from '@sa/hooks';
+import { useI18n } from 'vue-i18n';
 import { router } from '@/router';
 import { localStg } from '@/utils/storage';
 import { SetupStoreId } from '@/enum';
-import { $t } from '@/locales';
-import { changeLanguage } from '@/locales/useLanguage';
+import { $t, loadLocaleMessages } from '@/locales';
 import { setDayjsLocale } from '@/locales/dayjs';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
 import { useThemeStore } from '../theme';
 
 export const useAppStore = defineStore(SetupStoreId.App, () => {
+  const locale = ref<App.I18n.LangType>('zh-CN');
+  const { locale: i18nLocale } = useI18n();
   const themeStore = useThemeStore();
   const routeStore = useRouteStore();
   const tabStore = useTabStore();
@@ -53,8 +55,6 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     }
   }
 
-  const locale = ref<App.I18n.LangType>(localStg.get('lang') || 'zh-CN');
-
   const localeOptions: App.I18n.LangOption[] = [
     {
       label: '中文',
@@ -67,8 +67,9 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
   ];
 
   async function changeLocale(lang: App.I18n.LangType) {
+    await loadLocaleMessages(lang); // Get from Redis
     locale.value = lang;
-    await changeLanguage(lang);
+    i18nLocale.value = lang;
     localStg.set('lang', lang);
   }
 
