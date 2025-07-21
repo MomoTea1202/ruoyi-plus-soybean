@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useLoading } from '@sa/hooks';
 import { fetchCreateUser, fetchGetUserInfo, fetchUpdateUser } from '@/service/api/system/sub-acc-user';
+import { fetchSubAccPermMenuTreeSelect } from '@/service/api/system';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
+import MenuTree from '@/components/custom/menu-tree.vue';
 import { $t } from '@/locales';
 
 defineOptions({
@@ -14,10 +16,6 @@ interface Props {
   operateType: NaiveUI.TableOperateType;
   /** the edit row data */
   rowData?: Api.System.User | null;
-  /** the dept tree data */
-  deptData?: Api.Common.CommonTreeRecord;
-  /** the dept id */
-  deptId?: CommonType.IdType | null;
 }
 
 const props = defineProps<Props>();
@@ -33,9 +31,12 @@ const visible = defineModel<boolean>('visible', {
 });
 
 const { loading, startLoading, endLoading } = useLoading();
-const { loading: deptLoading, startLoading: startDeptLoading, endLoading: endDeptLoading } = useLoading();
+const { startLoading: startDeptLoading, endLoading: endDeptLoading } = useLoading();
+const { loading: menuLoading } = useLoading();
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { createRequiredRule, patternRules } = useFormRules();
+const menuTreeRef = ref<InstanceType<typeof MenuTree> | null>(null);
+const menuOptions = ref<Api.System.MenuList>([]);
 
 const title = computed(() => {
   const titles: Record<NaiveUI.TableOperateType, string> = {
@@ -49,6 +50,23 @@ type Model = Api.System.UserOperateParams;
 
 const model: Model = reactive(createDefaultModel());
 
+async function loadMenuTree(userName?: string) {
+  menuLoading.value = true;
+  try {
+    const { error, data } = await fetchSubAccPermMenuTreeSelect(userName!);
+    if (!error) {
+      // full tree data
+      menuOptions.value = data.menus;
+      // pre‑check on edit
+      if (props.operateType === 'edit') {
+        model.menuIds = data.checkedKeys;
+      }
+    }
+  } finally {
+    menuLoading.value = false;
+  }
+}
+
 function createDefaultModel(): Model {
   return {
     deptId: null,
@@ -61,7 +79,8 @@ function createDefaultModel(): Model {
     status: '0',
     roleIds: [],
     postIds: [],
-    remark: ''
+    remark: '',
+    menuIds: []
   };
 }
 
@@ -85,18 +104,25 @@ async function getUserInfo() {
   endLoading();
 }
 
-function handleUpdateModelWhenEdit() {
+async function handleUpdateModelWhenEdit() {
+  menuOptions.value = [];
+  model.menuIds = [];
   if (props.operateType === 'add') {
+    menuTreeRef.value?.refresh();
     Object.assign(model, createDefaultModel());
-    model.deptId = props.deptId;
     return;
   }
 
   if (props.operateType === 'edit' && props.rowData) {
     startDeptLoading();
     Object.assign(model, props.rowData);
+    const { data, error } = await fetchSubAccPermMenuTreeSelect(model.userName!);
+    if (error) return;
+    model.menuIds = data.checkedKeys;
+    menuOptions.value = data.menus;
     model.password = '';
     getUserInfo();
+    loadMenuTree(props.rowData.userName);
     endDeptLoading();
   }
 }
@@ -110,6 +136,7 @@ async function handleSubmit() {
 
   const { userId, deptId, userName, nickName, email, phonenumber, sex, password, status, roleIds, postIds, remark } =
     model;
+  const menuIds = menuTreeRef.value?.getCheckedMenuIds();
 
   // request
   if (props.operateType === 'add') {
@@ -124,7 +151,8 @@ async function handleSubmit() {
       status,
       roleIds,
       postIds,
-      remark
+      remark,
+      menuIds
     });
     if (error) return;
   }
@@ -141,7 +169,8 @@ async function handleSubmit() {
       status,
       roleIds,
       postIds,
-      remark
+      remark,
+      menuIds
     });
     if (error) return;
   }
@@ -151,9 +180,15 @@ async function handleSubmit() {
   emit('submitted');
 }
 
-watch(visible, () => {
-  if (visible.value) {
+watch(visible, async show => {
+  if (show) {
     handleUpdateModelWhenEdit();
+    if (props.operateType === 'edit' && props.rowData) {
+      await handleUpdateModelWhenEdit();
+      await loadMenuTree(props.rowData.userName);
+    } else {
+      menuTreeRef.value?.refresh();
+    }
     restoreValidation();
   }
 });
@@ -166,18 +201,6 @@ watch(visible, () => {
         <NForm ref="formRef" :model="model" :rules="rules">
           <NFormItem :label="$t('page.system.user.nickName')" path="nickName">
             <NInput v-model:value="model.nickName" :placeholder="$t('page.system.user.form.nickName.required')" />
-          </NFormItem>
-          <NFormItem :label="$t('page.system.user.deptName')" path="deptId">
-            <NTreeSelect
-              v-model:value="model.deptId"
-              :loading="deptLoading"
-              clearable
-              :options="deptData as []"
-              label-field="label"
-              key-field="id"
-              :default-expanded-keys="deptData?.length ? [deptData[0].id] : []"
-              :placeholder="$t('page.system.user.form.deptId.required')"
-            />
           </NFormItem>
           <NFormItem :label="$t('page.system.user.phonenumber')" path="phonenumber">
             <NInput v-model:value="model.phonenumber" :placeholder="$t('page.system.user.form.phonenumber.required')" />
@@ -204,14 +227,18 @@ watch(visible, () => {
               :placeholder="$t('page.system.user.form.sex.required')"
             />
           </NFormItem>
-          <NFormItem :label="$t('page.system.user.postIds')" path="postIds">
-            <PostSelect v-model:value="model.postIds" :dept-id="model.deptId" multiple clearable />
-          </NFormItem>
-          <NFormItem :label="$t('page.system.user.roleIds')" path="roleIds">
-            <RoleSelect v-model:value="model.roleIds" multiple clearable />
-          </NFormItem>
           <NFormItem :label="$t('page.system.user.status')" path="status">
             <DictRadio v-model:value="model.status" dict-code="sys_normal_disable" />
+          </NFormItem>
+          <NFormItem label="菜单权限" path="menuIds" class="pr-24px">
+            <MenuTree
+              v-if="visible"
+              ref="menuTreeRef"
+              v-model:checked-keys="model.menuIds"
+              v-model:options="menuOptions"
+              v-model:loading="menuLoading"
+              :immediate="operateType === 'add'"
+            />
           </NFormItem>
           <NFormItem :label="$t('page.system.user.remark')" path="remark">
             <NInput v-model:value="model.remark" :placeholder="$t('page.system.user.form.remark.required')" />

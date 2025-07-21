@@ -61,15 +61,17 @@ function createDefaultModel(): Model {
     status: '0',
     roleIds: [],
     postIds: [],
-    remark: ''
+    remark: '',
+    menuIds: []
   };
 }
 
-type RuleKey = Extract<keyof Model, 'userName' | 'nickName' | 'password' | 'status' | 'phonenumber'>;
+type RuleKey = Extract<keyof Model, 'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds'>;
 
 const rules: Record<RuleKey, App.Global.FormRule[]> = {
   userName: [createRequiredRule($t('page.system.user.form.userName.required'))],
   nickName: [createRequiredRule($t('page.system.user.form.nickName.required'))],
+  roleIds: [createRequiredRule('role id is require')],
   password: [{ ...patternRules.pwd, required: props.operateType === 'add' }],
   phonenumber: [patternRules.phone],
   status: [createRequiredRule($t('page.system.user.form.status.required'))]
@@ -108,8 +110,21 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { userId, deptId, userName, nickName, email, phonenumber, sex, password, status, roleIds, postIds, remark } =
-    model;
+  const {
+    userId,
+    deptId,
+    userName,
+    nickName,
+    email,
+    phonenumber,
+    sex,
+    password,
+    status,
+    roleIds,
+    postIds,
+    remark,
+    menuIds
+  } = model;
 
   // request
   if (props.operateType === 'add') {
@@ -124,7 +139,8 @@ async function handleSubmit() {
       status,
       roleIds,
       postIds,
-      remark
+      remark,
+      menuIds
     });
     if (error) return;
   }
@@ -141,7 +157,8 @@ async function handleSubmit() {
       status,
       roleIds,
       postIds,
-      remark
+      remark,
+      menuIds
     });
     if (error) return;
   }

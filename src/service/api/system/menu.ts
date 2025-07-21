@@ -52,6 +52,13 @@ export function fetchGetRoleMenuTreeSelect(roleId: CommonType.IdType) {
   });
 }
 
+export function fetchSubAccPermMenuTreeSelect(userName: string) {
+  return request<Api.System.RoleMenuTreeSelect>({
+    url: `/system/menu/subAccPermMenuTreeselect/${userName}`,
+    method: 'get'
+  });
+}
+
 /** 获取租户套餐关联菜单 */
 export function fetchGetTenantPackageMenuTreeSelect(packageId: CommonType.IdType) {
   return request<Api.System.TenantPackageMenuTreeSelect>({

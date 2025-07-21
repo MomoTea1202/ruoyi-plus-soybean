@@ -273,7 +273,7 @@ export const generatedRoutes: GeneratedRoute[] = [
         path: '/system/sub-user',
         component: 'view.system_sub-user',
         meta: {
-          title: 'system_sub-user',
+          title: 'Sub-Account Management',
           i18nKey: 'route.system_sub-user'
         }
       },

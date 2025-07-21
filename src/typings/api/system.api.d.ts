@@ -145,7 +145,7 @@ declare namespace Api {
         | 'password'
         | 'status'
         | 'remark'
-      > & { roleIds: CommonType.IdType[]; postIds: CommonType.IdType[] }
+      > & { roleIds: CommonType.IdType[]; menuIds: CommonType.IdType[]; postIds: CommonType.IdType[] }
     >;
 
     /** user profile operate params */
