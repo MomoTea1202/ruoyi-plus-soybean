@@ -18,11 +18,11 @@ const { userInfo } = useAuthStore();
 const naiveDarkTheme = computed(() => (themeStore.darkMode ? darkTheme : undefined));
 
 const naiveLocale = computed(() => {
-  return naiveLocales[appStore.locale];
+  return naiveLocales[appStore.locale as 'zh-CN' | 'en-US'];
 });
 
 const naiveDateLocale = computed(() => {
-  return naiveDateLocales[appStore.locale];
+  return naiveDateLocales[appStore.locale as 'zh-CN' | 'en-US'];
 });
 
 const watermarkProps = computed<WatermarkProps>(() => {
