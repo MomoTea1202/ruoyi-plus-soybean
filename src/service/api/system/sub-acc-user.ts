@@ -1,7 +1,7 @@
 import { request } from '@/service/request';
 
 /** 获取用户信息列表 */
-export function fetchGetSubUserList(params?: Api.System.UserSearchParams) {
+export function fetchGetSubUserList(params?: Api.Common.CommonSearchParams) {
   return request<Api.System.UserList>({
     url: '/system/subuser/list',
     method: 'get',
