@@ -47,11 +47,11 @@ const {
     params: {
       // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
       // the value can not be undefined, otherwise the property in Form will not be reactive
-      deptId: null,
       userName: null,
       nickName: null,
       phonenumber: null,
-      status: null
+      status: null,
+      parentName: null
     }
   },
   columns: () => [
@@ -79,6 +79,15 @@ const {
       key: 'nickName',
       property: 'nick_name',
       title: $t('page.system.user.nickName'),
+      align: 'center',
+      minWidth: 120,
+      ellipsis: true,
+      sorter: true
+    },
+    {
+      key: 'parentName',
+      property: 'parentName',
+      title: 'Parent Name',
       align: 'center',
       minWidth: 120,
       ellipsis: true,

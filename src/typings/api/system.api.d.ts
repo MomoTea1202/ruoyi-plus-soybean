@@ -122,6 +122,8 @@ declare namespace Api {
       loginDate: Date;
       /** 备注 */
       remark?: string;
+
+      parentName?: string;
     }>;
 
     /** user search params */
@@ -130,7 +132,9 @@ declare namespace Api {
         roleId: CommonType.IdType;
       } & Common.CommonSearchParams
     >;
-
+    type SubUserSearchParams = CommonType.RecordNullable<
+      Pick<User, 'userName' | 'nickName' | 'phonenumber' | 'status' | 'parentName'> & Common.CommonSearchParams
+    >;
     /** user operate params */
     type UserOperateParams = CommonType.RecordNullable<
       Pick<
@@ -700,13 +704,13 @@ declare namespace Api {
       >
     >;
     type Perm = Common.CommonRecord<{
-      userName: string;
-      userPerm: string;
+      username: string;
+      permList: string;
     }>;
     type UsrPermList = Api.Common.PaginatingQueryRecord<Perm>;
 
     type UsrPermSearchParams = CommonType.RecordNullable<
-      Pick<Perm, 'userName' | 'userPerm'> & Common.CommonSearchParams
+      Pick<Perm, 'username' | 'permList'> & Common.CommonSearchParams
     >;
 
     /** client list */

@@ -13,14 +13,14 @@ const { columns, data, loading, mobilePagination, getData, getDataByPage, search
   apiParams: {
     pageNum: 1,
     pageSize: 10,
-    userName: null,
-    userPerm: null
+    username: null,
+    permList: null
   },
   columns: () => [
     { type: 'selection', align: 'center', width: 48 },
     { key: 'index', title: 'index', align: 'center', width: 64 },
-    { key: 'userName', title: 'User Name', align: 'center', minWidth: 120 },
-    { key: 'userPerm', title: 'User Permission', align: 'center', minWidth: 120 }
+    { key: 'username', title: 'User Name', align: 'center', minWidth: 120 },
+    { key: 'permList', title: 'User Permission', align: 'center', minWidth: 120 }
   ]
 });
 const { checkedRowKeys } = useTableOperate(data, getData);

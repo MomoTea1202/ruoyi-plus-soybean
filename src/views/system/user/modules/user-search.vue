@@ -46,13 +46,19 @@ async function search() {
   <NCard :bordered="false" size="small" class="table-search card-wrapper">
     <NCollapse>
       <NCollapseItem :title="$t('common.search')" name="user-search">
-        <NForm ref="formRef" :model="model" label-placement="left" :label-width="80">
+        <NForm ref="formRef" :model="model.params!" label-placement="left" :label-width="80">
           <NGrid responsive="screen" item-responsive>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.system.user.userName')" path="userName" class="pr-24px">
-              <NInput v-model:value="model.userName" :placeholder="$t('page.system.user.form.userName.required')" />
+              <NInput
+                v-model:value="model.params!.userName"
+                :placeholder="$t('page.system.user.form.userName.required')"
+              />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.system.user.nickName')" path="nickName" class="pr-24px">
-              <NInput v-model:value="model.nickName" :placeholder="$t('page.system.user.form.nickName.required')" />
+              <NInput
+                v-model:value="model.params!.nickName"
+                :placeholder="$t('page.system.user.form.nickName.required')"
+              />
             </NFormItemGi>
             <NFormItemGi
               span="24 s:12 m:6"
@@ -61,13 +67,13 @@ async function search() {
               class="pr-24px"
             >
               <NInput
-                v-model:value="model.phonenumber"
+                v-model:value="model.params!.phonenumber"
                 :placeholder="$t('page.system.user.form.phonenumber.required')"
               />
             </NFormItemGi>
             <NFormItemGi span="24 s:12 m:6" :label="$t('page.system.user.status')" path="status" class="pr-24px">
               <DictSelect
-                v-model:value="model.status"
+                v-model:value="model.params!.status"
                 :placeholder="$t('page.system.user.form.status.required')"
                 dict-code="sys_normal_disable"
                 clearable
