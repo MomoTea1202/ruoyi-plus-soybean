@@ -3,7 +3,6 @@ import { computed, reactive, ref } from 'vue';
 import type { SelectOption } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
 import { fetchCaptchaCode, fetchTenantList } from '@/service/api';
-import { fetchSocialAuthBinding } from '@/service/api/system';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouterPush } from '@/hooks/common/router';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
@@ -112,18 +111,16 @@ handleLoginRember();
 // }
 
 // handleRegister();
-
-async function handleSocialLogin(type: Api.System.SocialSource) {
-  const { data, error } = await fetchSocialAuthBinding(type, model.tenantId);
-  if (error) return;
-  window.location.href = data;
-}
 </script>
 
 <template>
   <div>
-    <div class="mb-12px text-24px text-black font-500 sm:text-30px dark:text-white">登录到您的账户</div>
-    <div class="pb-24px text-18px text-#858585">欢迎回来！请输入您的账户信息</div>
+    <div class="mb-12px text-24px text-black font-500 sm:text-30px dark:text-white">
+      {{ $t('page.login.pwdLogin.loginToYourAcc') }}
+    </div>
+    <div class="pb-24px text-18px text-#858585">
+      {{ $t('page.login.pwdLogin.welcomeToLogin') }}
+    </div>
     <NForm
       ref="formRef"
       :model="model"
@@ -177,32 +174,6 @@ async function handleSocialLogin(type: Api.System.SocialSource) {
         </NButton>
       </NSpace>
     </NForm>
-
-    <NDivider>
-      <div class="color-#858585">{{ $t('page.login.pwdLogin.otherAccountLogin') }}</div>
-    </NDivider>
-
-    <div class="w-full flex-y-center gap-16px">
-      <NButton class="flex-1" @click="handleSocialLogin('gitee')">
-        <template #icon>
-          <icon-simple-icons:gitee class="color-#c71d23" />
-        </template>
-        <span class="ml-6px">Gitee</span>
-      </NButton>
-      <NButton class="flex-1" @click="handleSocialLogin('github')">
-        <template #icon>
-          <icon-mdi:github class="color-#010409" />
-        </template>
-        <span class="ml-6px">GitHub</span>
-      </NButton>
-    </div>
-
-    <div class="mt-32px w-full text-center text-18px text-#858585">
-      您还没有账户？
-      <NA type="primary" class="text-18px" @click="toggleLoginModule('register')">
-        {{ $t('page.login.common.register') }}
-      </NA>
-    </div>
   </div>
 </template>
 
