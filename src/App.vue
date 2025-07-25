@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { NConfigProvider, darkTheme } from 'naive-ui';
 import type { WatermarkProps } from 'naive-ui';
+import { $t } from '@/locales';
 import { useAppStore } from './store/modules/app';
 import { useThemeStore } from './store/modules/theme';
 import { useAuthStore } from './store/modules/auth';
@@ -26,7 +27,7 @@ const naiveDateLocale = computed(() => {
 });
 
 const watermarkProps = computed<WatermarkProps>(() => {
-  const appTitle = import.meta.env.VITE_APP_TITLE || 'RuoYi-Vue-Plus';
+  const appTitle = $t('system.title') || 'EzPay';
   const content =
     themeStore.watermark.enableUserName && userInfo.user?.userName
       ? `${userInfo.user?.nickName}@${appTitle} ${userInfo.user?.userName}`
