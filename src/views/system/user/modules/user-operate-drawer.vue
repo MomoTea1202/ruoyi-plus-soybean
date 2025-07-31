@@ -66,7 +66,10 @@ function createDefaultModel(): Model {
   };
 }
 
-type RuleKey = Extract<keyof Model, 'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds'>;
+type RuleKey = Extract<
+  keyof Model,
+  'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds' | 'email'
+>;
 
 const rules: Record<RuleKey, App.Global.FormRule[]> = {
   userName: [createRequiredRule($t('page.system.user.form.userName.required'))],
@@ -74,7 +77,8 @@ const rules: Record<RuleKey, App.Global.FormRule[]> = {
   roleIds: [createRequiredRule('role id is require')],
   password: [{ ...patternRules.pwd, required: props.operateType === 'add' }],
   phonenumber: [patternRules.phone],
-  status: [createRequiredRule($t('page.system.user.form.status.required'))]
+  status: [createRequiredRule($t('page.system.user.form.status.required'))],
+  email: [createRequiredRule($t('page.system.user.form.email.required'))]
 };
 
 async function getUserInfo() {

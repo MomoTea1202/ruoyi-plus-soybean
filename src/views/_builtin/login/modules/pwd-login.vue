@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import type { SelectOption } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
 import { fetchCaptchaCode, fetchTenantList } from '@/service/api';
@@ -18,6 +18,7 @@ const { formRef, validate } = useNaiveForm();
 const { loading: codeLoading, startLoading: startCodeLoading, endLoading: endCodeLoading } = useLoading();
 const { loading: tenantLoading, startLoading: startTenantLoading, endLoading: endTenantLoading } = useLoading();
 
+const codeString = ref('');
 const codeUrl = ref<string>();
 const captchaEnabled = ref<boolean>(false);
 const registerEnabled = ref<boolean>(false);
@@ -30,8 +31,16 @@ const tenantOption = ref<SelectOption[]>([]);
 const model: Api.Auth.PwdLoginForm = reactive({
   tenantId: '000000',
   username: 'admin',
-  password: 'admin123'
+  password: 'admin123',
+  verificationCode: 0
 });
+
+watch(codeString, val => {
+  const digits = val.replace(/\D/g, '').slice(0, 6);
+  codeString.value = digits;
+  model.verificationCode = digits === '' ? 0 : Number(digits);
+});
+
 type RuleKey = Extract<keyof Api.Auth.PwdLoginForm, 'username' | 'password' | 'code' | 'tenantId'>;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
@@ -148,6 +157,16 @@ handleLoginRember();
           :placeholder="$t('page.login.common.passwordPlaceholder')"
         />
       </NFormItem>
+      <NFormItem path="verificationCode">
+        <NInput
+          v-model:value="codeString"
+          type="text"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="$t('page.login.common.verificationCodePlaceholder')"
+          @input="codeString = codeString.replace(/\D/g, '')"
+        />
+      </NFormItem>
       <NFormItem v-if="captchaEnabled" path="code">
         <div class="w-full flex-y-center gap-16px">
           <NInput v-model:value="model.code" :placeholder="$t('page.login.common.codePlaceholder')" />
@@ -190,6 +209,7 @@ handleLoginRember();
 }
 
 :deep(.n-base-selection),
+:deep(.n-input-number),
 :deep(.n-input) {
   --n-height: 52px !important;
   --n-font-size: 16px !important;

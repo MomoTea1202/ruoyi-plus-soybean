@@ -104,6 +104,7 @@ declare namespace Api {
       code?: string;
       /** 唯一标识 */
       uuid?: string;
+      verificationCode?: number;
     }
 
     /** password login form */
@@ -112,6 +113,7 @@ declare namespace Api {
       username?: string;
       /** 密码 */
       password?: string;
+      verificationCode?: number;
     }
 
     /** social login form */
