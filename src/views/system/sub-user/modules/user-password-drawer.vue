@@ -28,16 +28,14 @@ const visible = defineModel<boolean>('visible', {
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { patternRules } = useFormRules();
 
-type Model = Api.System.UserOperateParams & { deptName: string };
+type Model = Api.System.UserOperateParams;
 
 const model: Model = reactive(createDefaultModel());
 
 function createDefaultModel(): Model {
   return {
-    deptId: null,
     userName: '',
     nickName: '',
-    deptName: '',
     password: ''
   };
 }
@@ -85,9 +83,6 @@ watch(visible, () => {
       <NForm ref="formRef" :model="model" :rules="rules">
         <NFormItem :label="$t('page.system.user.nickName')" path="nickName">
           <NInput v-model:value="model.nickName" disabled />
-        </NFormItem>
-        <NFormItem :label="$t('page.system.user.deptName')" path="deptName">
-          <NInput v-model:value="model.deptName" disabled />
         </NFormItem>
         <NFormItem :label="$t('page.system.user.userName')" path="userName">
           <NInput v-model:value="model.userName" disabled />

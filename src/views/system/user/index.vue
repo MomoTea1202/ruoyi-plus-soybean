@@ -1,9 +1,9 @@
 <script setup lang="tsx">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { NButton, NDivider } from 'naive-ui';
-import { useBoolean, useLoading } from '@sa/hooks';
+import { useBoolean } from '@sa/hooks';
 import { jsonClone } from '@sa/utils';
-import { fetchBatchDeleteUser, fetchGetDeptTree, fetchGetUserList, fetchUpdateUserStatus } from '@/service/api/system';
+import { fetchBatchDeleteUser, fetchGetUserList, fetchUpdateUserStatus } from '@/service/api/system';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';
 import { useDict } from '@/hooks/business/dict';
@@ -51,7 +51,6 @@ const {
     params: {
       // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
       // the value can not be undefined, otherwise the property in Form will not be reactive
-      deptId: null,
       userName: null,
       nickName: null,
       phonenumber: null,
@@ -83,15 +82,6 @@ const {
       key: 'nickName',
       property: 'nick_name',
       title: $t('page.system.user.nickName'),
-      align: 'center',
-      minWidth: 120,
-      ellipsis: true,
-      sorter: true
-    },
-    {
-      key: 'deptName',
-      property: 'dept_name',
-      title: $t('page.system.user.deptName'),
       align: 'center',
       minWidth: 120,
       ellipsis: true,
@@ -239,34 +229,7 @@ async function handleResetPwd(userId: CommonType.IdType) {
   openPasswordDrawer();
 }
 
-const { loading: treeLoading, startLoading: startTreeLoading, endLoading: endTreeLoading } = useLoading();
-const deptPattern = ref<string>();
-const deptData = ref<Api.Common.CommonTreeRecord>([]);
 const selectedKeys = ref<string[]>([]);
-
-async function getTreeData() {
-  startTreeLoading();
-  const { data: tree, error } = await fetchGetDeptTree();
-  if (!error) {
-    deptData.value = tree;
-  }
-  endTreeLoading();
-}
-
-getTreeData();
-
-function handleClickTree(keys: string[]) {
-  if (searchParams.params) {
-    searchParams.params.deptId = keys.length ? keys[0] : null;
-  }
-  checkedRowKeys.value = [];
-  getDataByPage();
-}
-
-function handleResetTreeData() {
-  deptPattern.value = undefined;
-  getTreeData();
-}
 
 function handleImport() {
   openImportModal();
@@ -295,12 +258,6 @@ function handleExport() {
   download('/system/user/export', searchParams, `${$t('page.system.user.title')}_${new Date().getTime()}.xlsx`);
 }
 
-const expandedKeys = ref<CommonType.IdType[]>([100]);
-
-const selectable = computed(() => {
-  return !loading.value;
-});
-
 function handleResetSearch() {
   resetSearchParams();
   selectedKeys.value = [];
@@ -308,136 +265,60 @@ function handleResetSearch() {
 </script>
 
 <template>
-  <TableSiderLayout :sider-title="$t('page.system.dept.title')">
-    <template #header-extra>
-      <NButton size="small" text class="h-18px" @click.stop="() => handleResetTreeData()">
-        <template #icon>
-          <SvgIcon icon="ic:round-refresh" />
-        </template>
-      </NButton>
-    </template>
-    <template #sider>
-      <NInput v-model:value="deptPattern" clearable :placeholder="$t('common.keywordSearch')" />
-      <NSpin class="dept-tree" :show="treeLoading">
-        <NTree
-          v-model:expanded-keys="expandedKeys"
-          v-model:selected-keys="selectedKeys"
-          block-node
-          show-line
-          :data="deptData as []"
-          :show-irrelevant-nodes="false"
-          :pattern="deptPattern"
-          class="infinite-scroll h-full min-h-200px py-3"
-          key-field="id"
-          label-field="label"
-          virtual-scroll
-          :selectable="selectable"
-          @update:selected-keys="handleClickTree"
-        >
-          <template #empty>
-            <NEmpty :description="$t('page.system.dept.empty')" class="h-full min-h-200px justify-center" />
-          </template>
-        </NTree>
-      </NSpin>
-    </template>
-    <div class="h-full flex-col-stretch gap-12px overflow-hidden lt-sm:overflow-auto">
-      <UserSearch v-model:model="searchParams" @reset="handleResetSearch" @search="getDataByPage" />
-      <TableRowCheckAlert v-model:checked-row-keys="checkedRowKeys" />
-      <NCard :title="$t('page.system.user.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
-        <template #header-extra>
-          <TableHeaderOperation
-            v-model:columns="columnChecks"
-            :disabled-delete="checkedRowKeys.length === 0"
-            :loading="loading"
-            :show-add="hasAuth('system:user:add')"
-            :show-delete="hasAuth('system:user:remove')"
-            :show-export="hasAuth('system:user:export')"
-            @add="handleAdd"
-            @delete="handleBatchDelete"
-            @export="handleExport"
-            @refresh="getData"
-          >
-            <template #after>
-              <NButton v-if="hasAuth('system:user:import')" size="small" ghost @click="handleImport">
-                <template #icon>
-                  <icon-material-symbols:upload-rounded class="text-icon" />
-                </template>
-                {{ $t('common.import') }}
-              </NButton>
-            </template>
-          </TableHeaderOperation>
-        </template>
-        <NDataTable
-          v-model:checked-row-keys="checkedRowKeys"
-          :columns="columns"
-          :data="data"
-          size="small"
-          :flex-height="!appStore.isMobile"
-          :scroll-x="962"
+  <div class="h-full flex-col-stretch gap-12px overflow-hidden lt-sm:overflow-auto">
+    <UserSearch v-model:model="searchParams" @reset="handleResetSearch" @search="getDataByPage" />
+    <TableRowCheckAlert v-model:checked-row-keys="checkedRowKeys" />
+    <NCard :title="$t('page.system.user.title')" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
+      <template #header-extra>
+        <TableHeaderOperation
+          v-model:columns="columnChecks"
+          :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
-          remote
-          :row-key="row => row.userId"
-          :pagination="mobilePagination"
-          class="h-full"
-          @update:sorter="handleSortChange"
-        />
-        <UserImportModal v-model:visible="importVisible" @submitted="getDataByPage" />
-        <UserOperateDrawer
-          v-model:visible="drawerVisible"
-          :operate-type="operateType"
-          :row-data="editingData"
-          :dept-data="deptData"
-          :dept-id="searchParams.params?.deptId"
-          @submitted="getDataByPage"
-        />
-        <UserPasswordDrawer v-model:visible="passwordVisible" :row-data="editingData" />
-      </NCard>
-    </div>
-  </TableSiderLayout>
+          :show-add="hasAuth('system:user:add')"
+          :show-delete="hasAuth('system:user:remove')"
+          :show-export="hasAuth('system:user:export')"
+          @add="handleAdd"
+          @delete="handleBatchDelete"
+          @export="handleExport"
+          @refresh="getData"
+        >
+          <template #after>
+            <NButton v-if="hasAuth('system:user:import')" size="small" ghost @click="handleImport">
+              <template #icon>
+                <icon-material-symbols:upload-rounded class="text-icon" />
+              </template>
+              {{ $t('common.import') }}
+            </NButton>
+          </template>
+        </TableHeaderOperation>
+      </template>
+      <NDataTable
+        v-model:checked-row-keys="checkedRowKeys"
+        :columns="columns"
+        :data="data"
+        size="small"
+        :flex-height="!appStore.isMobile"
+        :scroll-x="962"
+        :loading="loading"
+        remote
+        :row-key="row => row.userId"
+        :pagination="mobilePagination"
+        class="h-full"
+        @update:sorter="handleSortChange"
+      />
+      <UserImportModal v-model:visible="importVisible" @submitted="getDataByPage" />
+      <UserOperateDrawer
+        v-model:visible="drawerVisible"
+        :operate-type="operateType"
+        :row-data="editingData"
+        @submitted="getDataByPage"
+      />
+      <UserPasswordDrawer v-model:visible="passwordVisible" :row-data="editingData" />
+    </NCard>
+  </div>
 </template>
 
 <style scoped lang="scss">
-.dept-tree {
-  .n-button {
-    --n-padding: 8px !important;
-  }
-
-  :deep(.n-tree__empty) {
-    height: 100%;
-    justify-content: center;
-  }
-
-  :deep(.n-spin-content) {
-    height: 100%;
-  }
-
-  :deep(.infinite-scroll) {
-    height: calc(100vh - 228px - var(--calc-footer-height, 0px)) !important;
-    max-height: calc(100vh - 228px - var(--calc-footer-height, 0px)) !important;
-  }
-
-  @media screen and (max-width: 1024px) {
-    :deep(.infinite-scroll) {
-      height: calc(100vh - 227px - var(--calc-footer-height, 0px)) !important;
-      max-height: calc(100vh - 227px - var(--calc-footer-height, 0px)) !important;
-    }
-  }
-
-  :deep(.n-tree-node) {
-    height: 25px;
-  }
-
-  :deep(.n-tree-node-switcher) {
-    height: 25px;
-  }
-
-  :deep(.n-tree-node-switcher__icon) {
-    font-size: 16px !important;
-    height: 16px !important;
-    width: 16px !important;
-  }
-}
-
 :deep(.n-data-table-wrapper),
 :deep(.n-data-table-base-table),
 :deep(.n-data-table-base-table-body) {

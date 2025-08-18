@@ -14,10 +14,6 @@ interface Props {
   operateType: NaiveUI.TableOperateType;
   /** the edit row data */
   rowData?: Api.System.User | null;
-  /** the dept tree data */
-  deptData?: Api.Common.CommonTreeRecord;
-  /** the dept id */
-  deptId?: CommonType.IdType | null;
 }
 
 const props = defineProps<Props>();
@@ -33,7 +29,6 @@ const visible = defineModel<boolean>('visible', {
 });
 
 const { loading, startLoading, endLoading } = useLoading();
-const { loading: deptLoading, startLoading: startDeptLoading, endLoading: endDeptLoading } = useLoading();
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { createRequiredRule, patternRules } = useFormRules();
 
@@ -51,7 +46,6 @@ const model: Model = reactive(createDefaultModel());
 
 function createDefaultModel(): Model {
   return {
-    deptId: null,
     userName: '',
     nickName: '',
     email: '',
@@ -60,7 +54,6 @@ function createDefaultModel(): Model {
     password: '',
     status: '0',
     roleIds: [],
-    postIds: [],
     remark: '',
     menuIds: []
   };
@@ -86,7 +79,6 @@ async function getUserInfo() {
   const { error, data } = await fetchGetUserInfo(props.rowData?.userId);
   if (!error) {
     model.roleIds = data.roleIds;
-    model.postIds = data.postIds;
   }
   endLoading();
 }
@@ -94,16 +86,13 @@ async function getUserInfo() {
 function handleUpdateModelWhenEdit() {
   if (props.operateType === 'add') {
     Object.assign(model, createDefaultModel());
-    model.deptId = props.deptId;
     return;
   }
 
   if (props.operateType === 'edit' && props.rowData) {
-    startDeptLoading();
     Object.assign(model, props.rowData);
     model.password = '';
     getUserInfo();
-    endDeptLoading();
   }
 }
 
@@ -114,26 +103,11 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const {
-    userId,
-    deptId,
-    userName,
-    nickName,
-    email,
-    phonenumber,
-    sex,
-    password,
-    status,
-    roleIds,
-    postIds,
-    remark,
-    menuIds
-  } = model;
+  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleIds, remark, menuIds } = model;
 
   // request
   if (props.operateType === 'add') {
     const { error } = await fetchCreateUser({
-      deptId,
       userName,
       password,
       nickName,
@@ -142,7 +116,6 @@ async function handleSubmit() {
       sex,
       status,
       roleIds,
-      postIds,
       remark,
       menuIds
     });
@@ -152,7 +125,6 @@ async function handleSubmit() {
   if (props.operateType === 'edit') {
     const { error } = await fetchUpdateUser({
       userId,
-      deptId,
       userName,
       nickName,
       email,
@@ -160,7 +132,6 @@ async function handleSubmit() {
       sex,
       status,
       roleIds,
-      postIds,
       remark,
       menuIds
     });
@@ -188,18 +159,6 @@ watch(visible, () => {
           <NFormItem :label="$t('page.system.user.nickName')" path="nickName">
             <NInput v-model:value="model.nickName" :placeholder="$t('page.system.user.form.nickName.required')" />
           </NFormItem>
-          <NFormItem :label="$t('page.system.user.deptName')" path="deptId">
-            <NTreeSelect
-              v-model:value="model.deptId"
-              :loading="deptLoading"
-              clearable
-              :options="deptData as []"
-              label-field="label"
-              key-field="id"
-              :default-expanded-keys="deptData?.length ? [deptData[0].id] : []"
-              :placeholder="$t('page.system.user.form.deptId.required')"
-            />
-          </NFormItem>
           <NFormItem :label="$t('page.system.user.phonenumber')" path="phonenumber">
             <NInput v-model:value="model.phonenumber" :placeholder="$t('page.system.user.form.phonenumber.required')" />
           </NFormItem>
@@ -224,9 +183,6 @@ watch(visible, () => {
               dict-code="sys_user_sex"
               :placeholder="$t('page.system.user.form.sex.required')"
             />
-          </NFormItem>
-          <NFormItem :label="$t('page.system.user.postIds')" path="postIds">
-            <PostSelect v-model:value="model.postIds" :dept-id="model.deptId" multiple clearable />
           </NFormItem>
           <NFormItem :label="$t('page.system.user.roleIds')" path="roleIds">
             <RoleSelect v-model:value="model.roleIds" multiple clearable />

@@ -31,7 +31,6 @@ const visible = defineModel<boolean>('visible', {
 });
 
 const { loading, startLoading, endLoading } = useLoading();
-const { startLoading: startDeptLoading, endLoading: endDeptLoading } = useLoading();
 const { loading: menuLoading } = useLoading();
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { createRequiredRule, patternRules } = useFormRules();
@@ -69,7 +68,6 @@ async function loadMenuTree(userName?: string) {
 
 function createDefaultModel(): Model {
   return {
-    deptId: null,
     userName: '',
     nickName: '',
     email: '',
@@ -78,7 +76,6 @@ function createDefaultModel(): Model {
     password: '',
     status: '0',
     roleIds: [],
-    postIds: [],
     remark: '',
     menuIds: []
   };
@@ -100,7 +97,6 @@ async function getUserInfo() {
   const { error, data } = await fetchGetUserInfo(props.rowData?.userId);
   if (!error) {
     model.roleIds = data.roleIds;
-    model.postIds = data.postIds;
   }
   endLoading();
 }
@@ -115,7 +111,6 @@ async function handleUpdateModelWhenEdit() {
   }
 
   if (props.operateType === 'edit' && props.rowData) {
-    startDeptLoading();
     Object.assign(model, props.rowData);
     const { data, error } = await fetchSubAccPermMenuTreeSelect(model.userName!);
     if (error) return;
@@ -124,7 +119,6 @@ async function handleUpdateModelWhenEdit() {
     model.password = '';
     getUserInfo();
     loadMenuTree(props.rowData.userName);
-    endDeptLoading();
   }
 }
 
@@ -135,14 +129,12 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { userId, deptId, userName, nickName, email, phonenumber, sex, password, status, roleIds, postIds, remark } =
-    model;
+  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleIds, remark } = model;
   const menuIds = menuTreeRef.value?.getCheckedMenuIds();
 
   // request
   if (props.operateType === 'add') {
     const { error } = await fetchCreateUser({
-      deptId,
       userName,
       password,
       nickName,
@@ -151,7 +143,6 @@ async function handleSubmit() {
       sex,
       status,
       roleIds,
-      postIds,
       remark,
       menuIds
     });
@@ -161,7 +152,6 @@ async function handleSubmit() {
   if (props.operateType === 'edit') {
     const { error } = await fetchUpdateUser({
       userId,
-      deptId,
       userName,
       nickName,
       email,
@@ -169,7 +159,6 @@ async function handleSubmit() {
       sex,
       status,
       roleIds,
-      postIds,
       remark,
       menuIds
     });

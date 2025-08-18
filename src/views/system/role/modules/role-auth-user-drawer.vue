@@ -42,7 +42,6 @@ const { columns, data, getData, getDataByPage, loading, mobilePagination, search
     pageSize: 20,
     // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
     // the value can not be undefined, otherwise the property in Form will not be reactive
-    deptId: null,
     userName: null,
     nickName: null,
     phonenumber: null,
@@ -71,13 +70,6 @@ const { columns, data, getData, getDataByPage, loading, mobilePagination, search
     {
       key: 'nickName',
       title: '用户昵称',
-      align: 'center',
-      minWidth: 120,
-      ellipsis: true
-    },
-    {
-      key: 'deptName',
-      title: '部门',
       align: 'center',
       minWidth: 120,
       ellipsis: true

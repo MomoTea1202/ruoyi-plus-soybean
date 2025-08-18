@@ -128,7 +128,7 @@ declare namespace Api {
 
     /** user search params */
     type UserSearchParams = CommonType.RecordNullable<
-      Pick<User, 'deptId' | 'userName' | 'nickName' | 'phonenumber' | 'status'> & {
+      Pick<User, 'userName' | 'nickName' | 'phonenumber' | 'status'> & {
         roleId: CommonType.IdType;
       } & Common.CommonSearchParams
     >;
@@ -139,17 +139,8 @@ declare namespace Api {
     type UserOperateParams = CommonType.RecordNullable<
       Pick<
         User,
-        | 'userId'
-        | 'deptId'
-        | 'userName'
-        | 'nickName'
-        | 'email'
-        | 'phonenumber'
-        | 'sex'
-        | 'password'
-        | 'status'
-        | 'remark'
-      > & { roleIds: CommonType.IdType[]; menuIds: CommonType.IdType[]; postIds: CommonType.IdType[] }
+        'userId' | 'userName' | 'nickName' | 'email' | 'phonenumber' | 'sex' | 'password' | 'status' | 'remark'
+      > & { roleIds: CommonType.IdType[]; menuIds: CommonType.IdType[] }
     >;
 
     /** user profile operate params */
@@ -163,8 +154,6 @@ declare namespace Api {
 
     /** user info */
     type UserInfo = {
-      /** user post ids */
-      postIds: string[];
       /** user role ids */
       roleIds: string[];
     };
