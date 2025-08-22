@@ -19,9 +19,9 @@ async function setupApp() {
 
   setupStore(app);
 
-  await setupRouter(app);
-
   await setupI18n(app);
+
+  await setupRouter(app);
 
   setupAppVersionNotification();
 
