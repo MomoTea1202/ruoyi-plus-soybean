@@ -192,15 +192,6 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'system_dept',
-        path: '/system/dept',
-        component: 'view.system_dept',
-        meta: {
-          title: 'system_dept',
-          i18nKey: 'route.system_dept'
-        }
-      },
-      {
         name: 'system_dict',
         path: '/system/dict',
         component: 'view.system_dict',
@@ -248,15 +239,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           constant: true,
           hideInMenu: true,
           icon: 'hugeicons:configuration-01'
-        }
-      },
-      {
-        name: 'system_post',
-        path: '/system/post',
-        component: 'view.system_post',
-        meta: {
-          title: 'system_post',
-          i18nKey: 'route.system_post'
         }
       },
       {

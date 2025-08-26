@@ -8,13 +8,6 @@ export function fetchGetUserList(params?: Api.System.UserSearchParams) {
     params
   });
 }
-/** 获取部门用户信息列表 */
-export function fetchGetDeptUserList(deptId: CommonType.IdType) {
-  return request<Api.System.User[]>({
-    url: `/system/user/list/dept/${deptId}`,
-    method: 'get'
-  });
-}
 
 /** 新增用户信息 */
 export function fetchCreateUser(data: Api.System.UserOperateParams) {
@@ -63,14 +56,6 @@ export function fetchBatchDeleteUser(userIds: CommonType.IdType[]) {
 export function fetchGetUserInfo(userId?: CommonType.IdType) {
   return request<Api.System.UserInfo>({
     url: `/system/user/${userId}`,
-    method: 'get'
-  });
-}
-
-/** 获取部门树列表 */
-export function fetchGetDeptTree() {
-  return request<Api.Common.CommonTreeRecord>({
-    url: '/system/user/deptTree',
     method: 'get'
   });
 }

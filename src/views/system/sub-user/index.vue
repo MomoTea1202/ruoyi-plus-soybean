@@ -94,15 +94,6 @@ const {
       sorter: true
     },
     {
-      key: 'deptName',
-      property: 'dept_name',
-      title: $t('page.system.user.deptName'),
-      align: 'center',
-      minWidth: 120,
-      ellipsis: true,
-      sorter: true
-    },
-    {
       key: 'phonenumber',
       property: 'phonenumber',
       title: $t('page.system.user.phonenumber'),
@@ -244,7 +235,6 @@ async function handleResetPwd(userId: CommonType.IdType) {
   openPasswordDrawer();
 }
 
-const deptData = ref<Api.Common.CommonTreeRecord>([]);
 const selectedKeys = ref<string[]>([]);
 
 /** 处理状态切换 */
@@ -310,8 +300,6 @@ function handleResetSearch() {
         v-model:visible="drawerVisible"
         :operate-type="operateType"
         :row-data="editingData"
-        :dept-data="deptData"
-        :dept-id="searchParams.params?.deptId"
         @submitted="getDataByPage"
       />
       <UserPasswordDrawer v-model:visible="passwordVisible" :row-data="editingData" />

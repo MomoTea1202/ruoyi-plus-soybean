@@ -17,8 +17,6 @@ declare namespace Api {
     type Role = Common.CommonRecord<{
       /** 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限） */
       dataScope: DataScope;
-      /** 部门树选择项是否关联显示 */
-      deptCheckStrictly: boolean;
       /** 用户是否存在此角色标识 默认不存在 */
       flag: boolean;
       /** 菜单树选择项是否关联显示 */
@@ -48,16 +46,8 @@ declare namespace Api {
     type RoleOperateParams = CommonType.RecordNullable<
       Pick<
         Api.System.Role,
-        | 'roleId'
-        | 'roleName'
-        | 'roleKey'
-        | 'roleSort'
-        | 'menuCheckStrictly'
-        | 'deptCheckStrictly'
-        | 'dataScope'
-        | 'status'
-        | 'remark'
-      > & { menuIds: CommonType.IdType[]; deptIds: CommonType.IdType[] }
+        'roleId' | 'roleName' | 'roleKey' | 'roleSort' | 'menuCheckStrictly' | 'dataScope' | 'status' | 'remark'
+      > & { menuIds: CommonType.IdType[] }
     >;
 
     /** role list */
@@ -72,11 +62,6 @@ declare namespace Api {
     type TenantPackageMenuTreeSelect = Common.CommonRecord<{
       checkedKeys: CommonType.IdType[];
       menus: MenuList;
-    }>;
-    /** role dept tree select */
-    type RoleDeptTreeSelect = Common.CommonRecord<{
-      checkedKeys: CommonType.IdType[];
-      depts: Dept[];
     }>;
 
     /** all role */
@@ -95,9 +80,6 @@ declare namespace Api {
       /** 用户ID */
       userId: CommonType.IdType;
       /** 部门ID */
-      deptId: CommonType.IdType;
-      /** 部门名称 */
-      deptName: string;
       /** 用户账号 */
       userName: string;
       /** 用户昵称 */
@@ -382,90 +364,6 @@ declare namespace Api {
 
     /** dict data list */
     type DictDataList = Api.Common.PaginatingQueryRecord<DictData>;
-
-    /** dept */
-    type Dept = Api.Common.CommonRecord<{
-      /** 部门id */
-      deptId: CommonType.IdType;
-      /** 租户编号 */
-      tenantId: CommonType.IdType;
-      /** 父部门id */
-      parentId: CommonType.IdType;
-      /** 祖级列表 */
-      ancestors: string;
-      /** 部门名称 */
-      deptName: string;
-      /** 部门类别编码 */
-      deptCategory: string;
-      /** 显示顺序 */
-      orderNum: number;
-      /** 负责人 */
-      leader: number;
-      /** 联系电话 */
-      phone: string;
-      /** 邮箱 */
-      email: string;
-      /** 部门状态（0正常 1停用） */
-      status: Common.EnableStatus;
-      /** 子部门 */
-      children: Dept[];
-    }>;
-
-    /** dept search params */
-    type DeptSearchParams = CommonType.RecordNullable<
-      Pick<Api.System.Dept, 'deptName' | 'status'> & Api.Common.CommonSearchParams
-    >;
-
-    /** dept operate params */
-    type DeptOperateParams = CommonType.RecordNullable<
-      Pick<
-        Api.System.Dept,
-        'deptId' | 'parentId' | 'deptName' | 'deptCategory' | 'orderNum' | 'leader' | 'phone' | 'email' | 'status'
-      >
-    >;
-
-    /** dept list */
-    type DeptList = Api.Common.PaginatingQueryRecord<Dept>;
-
-    /** post */
-    type Post = Common.CommonRecord<{
-      /** 岗位ID */
-      postId: CommonType.IdType;
-      /** 租户编号 */
-      tenantId: CommonType.IdType;
-      /** 部门id */
-      deptId: CommonType.IdType;
-      /** 岗位编码 */
-      postCode: string;
-      /** 类别编码 */
-      postCategory: string;
-      /** 岗位名称 */
-      postName: string;
-      /** 显示顺序 */
-      postSort: number;
-      /** 状态（0正常 1停用） */
-      status: Common.EnableStatus;
-      /** 备注 */
-      remark: string;
-    }>;
-
-    /** post search params */
-    type PostSearchParams = CommonType.RecordNullable<
-      Pick<Api.System.Post, 'deptId' | 'postCode' | 'postName' | 'status'> & {
-        belongDeptId: CommonType.IdType;
-      } & Api.Common.CommonSearchParams
-    >;
-
-    /** post operate params */
-    type PostOperateParams = CommonType.RecordNullable<
-      Pick<
-        Api.System.Post,
-        'postId' | 'deptId' | 'postCode' | 'postCategory' | 'postName' | 'postSort' | 'status' | 'remark'
-      >
-    >;
-
-    /** post list */
-    type PostList = Api.Common.PaginatingQueryRecord<Post>;
 
     /** config */
     type Config = Common.CommonRecord<{

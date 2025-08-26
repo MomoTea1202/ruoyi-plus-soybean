@@ -39,13 +39,11 @@ declare module "@elegant-router/types" {
     "system": "/system";
     "system_client": "/system/client";
     "system_config": "/system/config";
-    "system_dept": "/system/dept";
     "system_dict": "/system/dict";
     "system_menu": "/system/menu";
     "system_notice": "/system/notice";
     "system_oss": "/system/oss";
     "system_oss-config": "/system/oss-config";
-    "system_post": "/system/post";
     "system_role": "/system/role";
     "system_sub-user": "/system/sub-user";
     "system_tenant": "/system/tenant";
@@ -135,13 +133,11 @@ declare module "@elegant-router/types" {
     | "monitor_operlog"
     | "system_client"
     | "system_config"
-    | "system_dept"
     | "system_dict"
     | "system_menu"
     | "system_notice"
     | "system_oss-config"
     | "system_oss"
-    | "system_post"
     | "system_role"
     | "system_sub-user"
     | "system_tenant-package"

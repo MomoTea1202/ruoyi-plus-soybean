@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
-import { useLoading } from '@sa/hooks';
+import { computed, reactive, watch } from 'vue';
 import { dataScopeOptions } from '@/constants/business';
-import { fetchGetRoleDeptTreeSelect, fetchUpdateRoleDataScope } from '@/service/api/system/role';
+import { fetchUpdateRoleDataScope } from '@/service/api/system/role';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
-import DeptTree from '@/components/custom/dept-tree.vue';
 
 defineOptions({
   name: 'RoleDataScopeDrawer'
@@ -24,15 +22,9 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const deptTreeRef = ref<InstanceType<typeof DeptTree> | null>(null);
-
 const visible = defineModel<boolean>('visible', {
   default: false
 });
-
-const deptOptions = ref<Api.System.Dept[]>([]);
-
-const { loading: deptLoading, startLoading: startDeptLoading, endLoading: endDeptLoading } = useLoading();
 
 const { formRef, validate, restoreValidation } = useNaiveForm();
 const { createRequiredRule } = useFormRules();
@@ -49,9 +41,7 @@ function createDefaultModel(): Model {
     roleName: props.rowData?.roleName,
     roleKey: props.rowData?.roleKey,
     roleSort: props.rowData?.roleSort,
-    deptIds: [],
     menuIds: [],
-    deptCheckStrictly: true,
     dataScope: '1'
   };
 }
@@ -62,21 +52,6 @@ const rules: Record<RuleKey, App.Global.FormRule> = {
   dataScope: createRequiredRule('数据权限范围不能为空')
 };
 
-async function handleUpdateModelWhenEdit() {
-  startDeptLoading();
-  deptOptions.value = [];
-  model.deptIds = [];
-
-  if (props.rowData) {
-    Object.assign(model, props.rowData);
-    const { error, data } = await fetchGetRoleDeptTreeSelect(props.rowData.roleId!);
-    if (error) return;
-    deptOptions.value = data.depts;
-    model.deptIds = data.checkedKeys;
-  }
-  endDeptLoading();
-}
-
 function closeDrawer() {
   visible.value = false;
 }
@@ -84,7 +59,7 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { roleId, roleName, roleKey, roleSort, dataScope, deptIds, menuIds } = model;
+  const { roleId, roleName, roleKey, roleSort, dataScope, menuIds } = model;
 
   const { error } = await fetchUpdateRoleDataScope({
     roleId,
@@ -92,7 +67,6 @@ async function handleSubmit() {
     roleKey,
     roleSort,
     dataScope,
-    deptIds: dataScope === '2' ? deptIds : [],
     menuIds
   });
   if (error) return;
@@ -104,7 +78,6 @@ async function handleSubmit() {
 
 watch(visible, () => {
   if (visible.value) {
-    handleUpdateModelWhenEdit();
     restoreValidation();
   }
 });
@@ -128,17 +101,6 @@ watch(visible, () => {
         </NFormItem>
         <NFormItem label="权限范围" path="dataScope">
           <NSelect v-model:value="model.dataScope" :options="dataScopeOptions" />
-        </NFormItem>
-        <NFormItem v-if="model.dataScope === '2'" label="数据权限" path="deptIds" class="pr-24px">
-          <DeptTree
-            v-if="visible"
-            ref="deptTreeRef"
-            v-model:value="model.deptIds"
-            v-model:options="deptOptions"
-            v-model:loading="deptLoading"
-            v-model:cascade="model.deptCheckStrictly"
-            :immediate="false"
-          />
         </NFormItem>
       </NForm>
       <template #footer>
