@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { NButton } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
-import { fetchUpdateUserPassword, fetchUpdateUserProfile } from '@/service/api/system';
+import { fetch2faQr, fetchUpdate2fa, fetchUpdateUserPassword, fetchUpdateUserProfile } from '@/service/api/system';
 import { useAuthStore } from '@/store/modules/auth';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import OnlineTable from './modules/online-table.vue';
@@ -16,6 +16,7 @@ const authStore = useAuthStore();
 const { userInfo } = authStore;
 
 const { loading: btnLoading, startLoading: startBtnLoading, endLoading: endBtnLoading } = useLoading();
+const { loading: qrLoading, startLoading: startQrLoading, endLoading: endQrLoading } = useLoading();
 
 const {
   formRef: profileFormRef,
@@ -31,6 +32,10 @@ const { createRequiredRule, patternRules } = useFormRules();
 
 type ProfileModel = Api.System.UserProfileOperateParams;
 type PasswordModel = Api.System.UserPasswordOperateParams & { confirmPassword: string };
+
+type QrModel = { qrDataUrl: string };
+const showQrModel = ref(false);
+const qr = reactive<QrModel>({ qrDataUrl: '' });
 
 const profileModel: ProfileModel = reactive(createDefaultProfileModel());
 const passwordModel: PasswordModel = reactive(createDefaultPasswordModel());
@@ -83,6 +88,41 @@ async function updateProfile() {
   endBtnLoading();
 }
 
+async function update2fa() {
+  startBtnLoading();
+  const prev = userInfo.user?.isSfa ?? true;
+  try {
+    userInfo.user!.isSfa = !prev;
+    const { error } = await fetchUpdate2fa();
+    if (error) throw error;
+    if (!userInfo.user!.isSfa) {
+      showQrModel.value = false;
+      qr.qrDataUrl = '';
+    }
+    window.$message?.success('更新成功');
+  } catch {
+    userInfo.user!.isSfa = prev;
+    window.$message?.error('更新失败');
+  } finally {
+    endBtnLoading();
+  }
+}
+
+async function showQr() {
+  startQrLoading();
+  try {
+    const { data, error } = await fetch2faQr();
+    if (error) {
+      window.$message?.error('获取二维码失败');
+    } else {
+      qr.qrDataUrl = data.qrDataUrl;
+      showQrModel.value = true;
+    }
+  } finally {
+    endQrLoading();
+  }
+}
+
 async function updatePassword() {
   await passwordValidate();
   if (passwordModel.newPassword !== passwordModel.confirmPassword) {
@@ -121,9 +161,6 @@ async function updatePassword() {
           <NDescriptionsItem label="用户邮箱">
             <div class="text-14px">{{ userInfo.user?.email }}</div>
           </NDescriptionsItem>
-          <NDescriptionsItem label="所属部门">
-            <div class="text-14px">{{ userInfo.user?.deptName }}</div>
-          </NDescriptionsItem>
           <NDescriptionsItem label="所属角色">
             <NSpace>
               <NTag v-for="role in userInfo.user?.roles" :key="role.roleId" type="primary" size="small">
@@ -133,6 +170,28 @@ async function updatePassword() {
           </NDescriptionsItem>
           <NDescriptionsItem label="创建日期">
             <div class="text-14px">{{ userInfo.user?.createTime }}</div>
+          </NDescriptionsItem>
+          <NDescriptionsItem label="SFA">
+            <div class="flex items-center gap-8px">
+              <NTag :type="userInfo.user?.isSfa ? 'success' : 'error'">
+                {{ userInfo.user?.isSfa ? 'On' : 'Off' }}
+              </NTag>
+
+              <NButton type="primary" :loading="btnLoading" @click="update2fa">切换</NButton>
+              <NButton v-if="userInfo.user?.isSfa" :loading="qrLoading" @click="showQr">显示二维码</NButton>
+            </div>
+
+            <NModal v-model:show="showQrModel" transform-origin="center" class="qr-modal">
+              <div class="qr-panel">
+                <div class="qr-header">
+                  <span>2FA QR</span>
+                  <NButton quaternary size="small" @click="showQrModel = false">✕</NButton>
+                </div>
+                <div class="qr-body">
+                  <img v-if="qr.qrDataUrl" :src="qr.qrDataUrl" alt="2FA QR" class="qr-img" />
+                </div>
+              </div>
+            </NModal>
           </NDescriptionsItem>
         </NDescriptions>
       </div>
@@ -239,5 +298,31 @@ async function updatePassword() {
 :deep(.n-tabs-pane-wrapper),
 :deep(.n-tab-pane) {
   height: 100% !important;
+}
+.qr-panel {
+  width: 300px;
+  background: var(--n-color);
+  border-radius: var(--n-border-radius);
+  box-shadow: var(--n-box-shadow);
+  padding: 12px 16px;
+}
+
+.qr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.qr-body {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-img {
+  width: 240px;
+  height: 240px;
 }
 </style>

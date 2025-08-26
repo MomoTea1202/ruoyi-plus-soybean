@@ -124,6 +124,8 @@ declare namespace Api {
       remark?: string;
 
       parentName?: string;
+
+      isSfa?: boolean;
     }>;
 
     /** user search params */

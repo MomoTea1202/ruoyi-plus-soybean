@@ -126,6 +126,20 @@ export function fetchUpdateUserPassword(data: Api.System.UserPasswordOperatePara
   });
 }
 
+export function fetchUpdate2fa() {
+  return request<boolean>({
+    url: '/system/user/change2fa',
+    method: 'put'
+  });
+}
+
+export function fetch2faQr() {
+  return request<{ qrDataUrl: string }>({
+    url: '/system/user/2fa/qr',
+    method: 'get'
+  });
+}
+
 /** 修改用户头像 */
 export function fetchUpdateUserAvatar(formData: FormData) {
   return request<boolean>({
