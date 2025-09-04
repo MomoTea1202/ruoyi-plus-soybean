@@ -210,8 +210,7 @@ const local: App.I18n.Schema = {
     tool_gen: 'Code Generation',
     system_user: 'User Management',
     system_dict: 'Dict Management',
-    system_tenant: 'Tenant Management',
-    'system_tenant-package': 'Tenant Package Management',
+
     system_config: 'Config Management',
     monitor: 'Monitor Management',
     monitor_logininfor: 'Login Log',
@@ -236,7 +235,6 @@ const local: App.I18n.Schema = {
     exception_500: '500'
   },
   menu: {
-    system_tenant: 'Tenant Management',
     system_log: 'Log Management',
     'monitor_snail-job': 'Job Management',
     monitor_admin: 'Admin Monitor'

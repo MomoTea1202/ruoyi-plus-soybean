@@ -59,14 +59,6 @@ export function fetchSubAccPermMenuTreeSelect(userName: string) {
   });
 }
 
-/** 获取租户套餐关联菜单 */
-export function fetchGetTenantPackageMenuTreeSelect(packageId: CommonType.IdType) {
-  return request<Api.System.TenantPackageMenuTreeSelect>({
-    url: `/system/menu/tenantPackageMenuTreeselect/${packageId}`,
-    method: 'get'
-  });
-}
-
 // 级联删除菜单
 export function fetchCascadeDeleteMenu(menuIds: CommonType.IdType[]) {
   return request<boolean>({

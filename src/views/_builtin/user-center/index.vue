@@ -6,7 +6,6 @@ import { fetch2faQr, fetchUpdate2fa, fetchUpdateUserPassword, fetchUpdateUserPro
 import { useAuthStore } from '@/store/modules/auth';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import OnlineTable from './modules/online-table.vue';
-import SocialCard from './modules/social-card.vue';
 import UserAvatar from './modules/user-avatar.vue';
 defineOptions({
   name: 'UserCenter'
@@ -276,9 +275,6 @@ async function updatePassword() {
               </NButton>
             </NFormItem>
           </NForm>
-        </NTabPane>
-        <NTabPane name="social" tab="第三方应用">
-          <SocialCard />
         </NTabPane>
         <NTabPane name="online" tab="在线设备">
           <div class="h-full">

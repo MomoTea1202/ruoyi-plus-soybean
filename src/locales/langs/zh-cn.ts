@@ -210,8 +210,7 @@ const local: App.I18n.Schema = {
     tool_gen: '代码生成',
     system_user: '用户管理',
     system_dict: '字典管理',
-    system_tenant: '租户管理',
-    'system_tenant-package': '租户套餐',
+
     system_config: '参数设置',
     'system_sub-user': '子用户',
     monitor: '系统监控',
@@ -236,7 +235,6 @@ const local: App.I18n.Schema = {
     exception_500: '500'
   },
   menu: {
-    system_tenant: '租户管理',
     system_log: '日志管理',
     'monitor_snail-job': '任务调度中心',
     monitor_admin: 'Admin 监控'

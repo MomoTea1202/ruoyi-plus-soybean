@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import type { SelectOption } from 'naive-ui';
 import { useLoading } from '@sa/hooks';
-import { fetchCaptchaCode, fetchTenantList } from '@/service/api';
+import { fetchCaptchaCode } from '@/service/api';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouterPush } from '@/hooks/common/router';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
@@ -16,17 +15,12 @@ const authStore = useAuthStore();
 const { toggleLoginModule } = useRouterPush();
 const { formRef, validate } = useNaiveForm();
 const { loading: codeLoading, startLoading: startCodeLoading, endLoading: endCodeLoading } = useLoading();
-const { loading: tenantLoading, startLoading: startTenantLoading, endLoading: endTenantLoading } = useLoading();
 
 const codeString = ref('');
 const codeUrl = ref<string>();
 const captchaEnabled = ref<boolean>(false);
 const registerEnabled = ref<boolean>(false);
 const remberMe = ref<boolean>(false);
-
-const tenantEnabled = ref<boolean>(false);
-
-const tenantOption = ref<SelectOption[]>([]);
 
 const model: Api.Auth.PwdLoginForm = reactive({
   tenantId: '000000',
@@ -41,7 +35,7 @@ watch(codeString, val => {
   model.verificationCode = digits === '' ? 0 : Number(digits);
 });
 
-type RuleKey = Extract<keyof Api.Auth.PwdLoginForm, 'username' | 'password' | 'code' | 'tenantId'>;
+type RuleKey = Extract<keyof Api.Auth.PwdLoginForm, 'username' | 'password' | 'code'>;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   // inside computed to make locale reactive, if not apply i18n, you can define it without computed
@@ -50,34 +44,18 @@ const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   const loginRules: Record<RuleKey, App.Global.FormRule[]> = {
     username: [...formRules.userName, { required: true }],
     password: [createRequiredRule($t('form.pwd.required'))],
-    code: captchaEnabled.value ? [createRequiredRule($t('form.code.required'))] : [],
-    tenantId: tenantEnabled.value ? formRules.tenantId : []
+    code: captchaEnabled.value ? [createRequiredRule($t('form.code.required'))] : []
   };
 
   return loginRules;
 });
-async function handleFetchTenantList() {
-  startTenantLoading();
-  const { data, error } = await fetchTenantList();
-  if (error) return;
-  tenantEnabled.value = data.tenantEnabled;
-  tenantOption.value = data.voList.map(tenant => {
-    return {
-      label: tenant.companyName,
-      value: tenant.tenantId
-    };
-  });
-  endTenantLoading();
-}
-
-handleFetchTenantList();
 
 async function handleSubmit() {
   await validate();
   // 勾选了需要记住密码设置在 localStorage 中设置记住用户名和密码
   if (remberMe.value) {
-    const { tenantId, username, password } = model;
-    localStg.set('loginRember', { tenantId, username, password });
+    const { username, password } = model;
+    localStg.set('loginRember', { username, password });
   } else {
     // 否则移除
     localStg.remove('loginRember');
@@ -138,14 +116,6 @@ handleLoginRember();
       :show-label="false"
       @keyup.enter="() => !authStore.loginLoading && handleSubmit()"
     >
-      <NFormItem v-if="tenantEnabled" path="tenantId">
-        <NSelect
-          v-model:value="model.tenantId"
-          placeholder="请选择租户"
-          :options="tenantOption"
-          :loading="tenantLoading"
-        />
-      </NFormItem>
       <NFormItem path="username">
         <NInput v-model:value="model.username" :placeholder="$t('page.login.common.userNamePlaceholder')" />
       </NFormItem>
