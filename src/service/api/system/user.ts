@@ -27,6 +27,14 @@ export function fetchUpdateUser(data: Api.System.UserOperateParams) {
   });
 }
 
+/** 获取角色选择框列表 */
+export function fetchGetCompanySelect() {
+  return request<Api.System.User[]>({
+    url: '/system/user/cpyoptionselect',
+    method: 'get'
+  });
+}
+
 /** 获取用户选择框列表 */
 export function fetchGetUserSelect() {
   return request<Api.System.User[]>({

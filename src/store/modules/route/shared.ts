@@ -9,7 +9,7 @@ import { $t } from '@/locales';
  * @param routes Auth routes
  * @param roles Roles
  */
-export function filterAuthRoutesByRoles(routes: ElegantConstRoute[], roles: string[]) {
+export function filterAuthRoutesByRoles(routes: ElegantConstRoute[], roles: string) {
   return routes.flatMap(route => filterAuthRouteByRoles(route, roles));
 }
 
@@ -19,7 +19,7 @@ export function filterAuthRoutesByRoles(routes: ElegantConstRoute[], roles: stri
  * @param route Auth route
  * @param roles Roles
  */
-function filterAuthRouteByRoles(route: ElegantConstRoute, roles: string[]): ElegantConstRoute[] {
+function filterAuthRouteByRoles(route: ElegantConstRoute, roles: string): ElegantConstRoute[] {
   const routeRoles = (route.meta && route.meta.roles) || [];
 
   // if the route's "roles" is empty, then it is allowed to access

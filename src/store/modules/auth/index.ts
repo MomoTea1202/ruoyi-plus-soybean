@@ -22,7 +22,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
   const userInfo: Api.Auth.UserInfo = reactive({
     user: undefined,
-    roles: [],
+    roles: '',
     permissions: []
   });
 
@@ -32,6 +32,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
     return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE);
   });
+  const isSa = computed<boolean>(() => Number(userInfo.roles) === 1);
 
   /** Is login */
   const isLogin = computed(() => Boolean(token.value));
@@ -186,6 +187,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     token,
     userInfo,
     isStaticSuper,
+    isSa,
     isLogin,
     loginLoading,
     resetStore,

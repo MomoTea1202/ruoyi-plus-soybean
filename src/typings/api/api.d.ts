@@ -161,30 +161,12 @@ declare namespace Api {
       /** 用户信息 */
       user?: Api.System.User & {
         /** 所属角色 */
-        roles: Api.System.Role[];
+        roles: Api.System.Role;
       };
       /** 角色列表 */
-      roles: string[];
+      roles: string;
       /** 菜单权限 */
       permissions: string[];
-    }
-
-    /** tenant */
-    interface Tenant {
-      /** 企业名称 */
-      companyName: string;
-      /** 域名 */
-      domain: string;
-      /** 租户编号 */
-      tenantId: string;
-    }
-
-    /** login tenant */
-    interface LoginTenant {
-      /** 租户开关 */
-      tenantEnabled: boolean;
-      /** 租户列表 */
-      voList: Tenant[];
     }
 
     interface CaptchaCode {

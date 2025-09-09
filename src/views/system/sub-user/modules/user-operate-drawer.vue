@@ -75,7 +75,7 @@ function createDefaultModel(): Model {
     sex: '0',
     password: '',
     status: '0',
-    roleIds: [],
+    roleIds: '',
     remark: '',
     menuIds: []
   };

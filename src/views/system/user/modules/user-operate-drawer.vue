@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useLoading } from '@sa/hooks';
 import { fetchCreateUser, fetchGetUserInfo, fetchUpdateUser } from '@/service/api/system';
+import { useAuthStore } from '@/store/modules/auth';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
+import CompanySelect from './cpy-select.vue';
 
 defineOptions({
   name: 'UserOperateDrawer'
@@ -53,26 +55,42 @@ function createDefaultModel(): Model {
     sex: '0',
     password: '',
     status: '0',
-    roleIds: [],
+    roleIds: '',
     remark: '',
-    menuIds: []
+    menuIds: [],
+    cpyId: ''
   };
 }
+const auth = useAuthStore();
+const isSA = computed(() => auth.isSa);
+const showCompany = ref(false);
+
+watch(
+  [() => model.roleIds, isSA],
+  ([rid, sa]) => {
+    const ridNum = Number(rid);
+    const need = sa && (ridNum === 3 || ridNum === 4);
+    showCompany.value = need;
+    if (!need) model.cpyId = '';
+  },
+  { immediate: true }
+);
 
 type RuleKey = Extract<
   keyof Model,
-  'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds' | 'email'
+  'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds' | 'email' | 'cpyId'
 >;
 
-const rules: Record<RuleKey, App.Global.FormRule[]> = {
+const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => ({
   userName: [createRequiredRule($t('page.system.user.form.userName.required'))],
   nickName: [createRequiredRule($t('page.system.user.form.nickName.required'))],
   roleIds: [createRequiredRule('role id is require')],
   password: [{ ...patternRules.pwd, required: props.operateType === 'add' }],
   phonenumber: [patternRules.phone],
   status: [createRequiredRule($t('page.system.user.form.status.required'))],
-  email: [createRequiredRule($t('page.system.user.form.email.required'))]
-};
+  email: [createRequiredRule($t('page.system.user.form.email.required'))],
+  cpyId: showCompany.value ? [createRequiredRule($t('page.system.user.form.company.required'))] : []
+}));
 
 async function getUserInfo() {
   startLoading();
@@ -185,7 +203,10 @@ watch(visible, () => {
             />
           </NFormItem>
           <NFormItem :label="$t('page.system.user.roleIds')" path="roleIds">
-            <RoleSelect v-model:value="model.roleIds" multiple clearable />
+            <RoleSelect v-model:value="model.roleIds" clearable :multiple="false" />
+          </NFormItem>
+          <NFormItem v-if="showCompany" :label="$t('page.system.user.company')" path="cpyId">
+            <CompanySelect v-model:value="model.cpyId" clearable :multiple="false" />
           </NFormItem>
           <NFormItem :label="$t('page.system.user.status')" path="status">
             <DictRadio v-model:value="model.status" dict-code="sys_normal_disable" />

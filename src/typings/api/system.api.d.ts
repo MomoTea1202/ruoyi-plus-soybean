@@ -108,6 +108,8 @@ declare namespace Api {
       parentName?: string;
 
       isSfa?: boolean;
+
+      cpyId: CommonType.IdType;
     }>;
 
     /** user search params */
@@ -123,8 +125,17 @@ declare namespace Api {
     type UserOperateParams = CommonType.RecordNullable<
       Pick<
         User,
-        'userId' | 'userName' | 'nickName' | 'email' | 'phonenumber' | 'sex' | 'password' | 'status' | 'remark'
-      > & { roleIds: CommonType.IdType[]; menuIds: CommonType.IdType[] }
+        | 'userId'
+        | 'userName'
+        | 'nickName'
+        | 'email'
+        | 'phonenumber'
+        | 'sex'
+        | 'password'
+        | 'status'
+        | 'remark'
+        | 'cpyId'
+      > & { roleIds: CommonType.IdType; menuIds: CommonType.IdType[] }
     >;
 
     /** user profile operate params */
@@ -139,7 +150,7 @@ declare namespace Api {
     /** user info */
     type UserInfo = {
       /** user role ids */
-      roleIds: string[];
+      roleIds: string;
     };
 
     /** user list */
@@ -148,7 +159,7 @@ declare namespace Api {
     /** auth role */
     type AuthRole = {
       user: User;
-      roles: Role[];
+      roles: Role;
     };
 
     /** social */
