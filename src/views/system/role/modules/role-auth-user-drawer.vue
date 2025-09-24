@@ -105,7 +105,7 @@ async function handleUpdateModelWhenEdit() {
   checkedRowKeys.value = [];
   getDataByPage();
   const { data: roleUserList } = await fetchGetRoleUserList({
-    roleId: props.rowData?.roleId
+    roleKey: props.rowData?.roleKey
   });
   checkedRowKeys.value = roleUserList?.rows.map(item => item.userId) || [];
 }

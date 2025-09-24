@@ -15,16 +15,6 @@ declare namespace Api {
 
     /** role */
     type Role = Common.CommonRecord<{
-      /** 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限） */
-      dataScope: DataScope;
-      /** 用户是否存在此角色标识 默认不存在 */
-      flag: boolean;
-      /** 菜单树选择项是否关联显示 */
-      menuCheckStrictly: boolean;
-      /** 备注 */
-      remark?: string;
-      /** 角色ID */
-      roleId: CommonType.IdType;
       /** 角色权限字符串 */
       roleKey: string;
       /** 角色名称 */
@@ -44,10 +34,7 @@ declare namespace Api {
 
     /** role operate params */
     type RoleOperateParams = CommonType.RecordNullable<
-      Pick<
-        Api.System.Role,
-        'roleId' | 'roleName' | 'roleKey' | 'roleSort' | 'menuCheckStrictly' | 'dataScope' | 'status' | 'remark'
-      > & { menuIds: CommonType.IdType[] }
+      Pick<Api.System.Role, 'roleName' | 'roleKey' | 'roleSort' | 'status'> & { menuIds: CommonType.IdType[] }
     >;
 
     /** role list */
@@ -65,7 +52,7 @@ declare namespace Api {
     }>;
 
     /** all role */
-    type AllRole = Pick<Role, 'roleId' | 'roleName' | 'roleKey'>;
+    type AllRole = Pick<Role, 'roleName' | 'roleKey'>;
 
     /**
      * user gender
@@ -115,7 +102,7 @@ declare namespace Api {
     /** user search params */
     type UserSearchParams = CommonType.RecordNullable<
       Pick<User, 'userName' | 'nickName' | 'phonenumber' | 'status'> & {
-        roleId: CommonType.IdType;
+        roleKey: string;
       } & Common.CommonSearchParams
     >;
     type SubUserSearchParams = CommonType.RecordNullable<
@@ -135,7 +122,7 @@ declare namespace Api {
         | 'status'
         | 'remark'
         | 'cpyId'
-      > & { roleIds: CommonType.IdType; menuIds: CommonType.IdType[] }
+      > & { roleKey: string; menuIds: CommonType.IdType[] }
     >;
 
     /** user profile operate params */
@@ -150,7 +137,7 @@ declare namespace Api {
     /** user info */
     type UserInfo = {
       /** user role ids */
-      roleIds: string;
+      roleKey: string;
     };
 
     /** user list */

@@ -55,7 +55,7 @@ function createDefaultModel(): Model {
     sex: '0',
     password: '',
     status: '0',
-    roleIds: '',
+    roleKey: '',
     remark: '',
     menuIds: [],
     cpyId: ''
@@ -66,10 +66,10 @@ const isSA = computed(() => auth.isSa);
 const showCompany = ref(false);
 
 watch(
-  [() => model.roleIds, isSA],
+  [() => model.roleKey, isSA],
   ([rid, sa]) => {
-    const ridNum = Number(rid);
-    const need = sa && (ridNum === 3 || ridNum === 4);
+    const ridNum = rid;
+    const need = sa && (ridNum === 'MER' || ridNum === 'LDR');
     showCompany.value = need;
     if (!need) model.cpyId = '';
   },
@@ -78,13 +78,13 @@ watch(
 
 type RuleKey = Extract<
   keyof Model,
-  'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleIds' | 'email' | 'cpyId'
+  'userName' | 'nickName' | 'password' | 'status' | 'phonenumber' | 'roleKey' | 'email' | 'cpyId'
 >;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => ({
   userName: [createRequiredRule($t('page.system.user.form.userName.required'))],
   nickName: [createRequiredRule($t('page.system.user.form.nickName.required'))],
-  roleIds: [createRequiredRule('role id is require')],
+  roleKey: [createRequiredRule('role id is require')],
   password: [{ ...patternRules.pwd, required: props.operateType === 'add' }],
   phonenumber: [patternRules.phone],
   status: [createRequiredRule($t('page.system.user.form.status.required'))],
@@ -96,7 +96,7 @@ async function getUserInfo() {
   startLoading();
   const { error, data } = await fetchGetUserInfo(props.rowData?.userId);
   if (!error) {
-    model.roleIds = data.roleIds;
+    model.roleKey = data.roleKey;
   }
   endLoading();
 }
@@ -121,7 +121,8 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleIds, remark, menuIds } = model;
+  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleKey, remark, menuIds, cpyId } =
+    model;
 
   // request
   if (props.operateType === 'add') {
@@ -133,9 +134,10 @@ async function handleSubmit() {
       phonenumber,
       sex,
       status,
-      roleIds,
+      roleKey,
       remark,
-      menuIds
+      menuIds,
+      cpyId
     });
     if (error) return;
   }
@@ -149,9 +151,10 @@ async function handleSubmit() {
       phonenumber,
       sex,
       status,
-      roleIds,
+      roleKey,
       remark,
-      menuIds
+      menuIds,
+      cpyId
     });
     if (error) return;
   }
@@ -202,8 +205,8 @@ watch(visible, () => {
               :placeholder="$t('page.system.user.form.sex.required')"
             />
           </NFormItem>
-          <NFormItem :label="$t('page.system.user.roleIds')" path="roleIds">
-            <RoleSelect v-model:value="model.roleIds" clearable :multiple="false" />
+          <NFormItem v-if="operateType === 'add'" :label="$t('page.system.user.roleKey')" path="roleKey">
+            <RoleSelect v-model:value="model.roleKey" clearable :multiple="false" />
           </NFormItem>
           <NFormItem v-if="showCompany" :label="$t('page.system.user.company')" path="cpyId">
             <CompanySelect v-model:value="model.cpyId" clearable :multiple="false" />

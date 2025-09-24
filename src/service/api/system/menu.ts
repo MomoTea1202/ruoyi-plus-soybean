@@ -45,9 +45,9 @@ export function fetchGetMenuTreeSelect() {
 }
 
 /** 获取角色菜单权限 */
-export function fetchGetRoleMenuTreeSelect(roleId: CommonType.IdType) {
+export function fetchGetRoleMenuTreeSelect(roleKey: string) {
   return request<Api.System.RoleMenuTreeSelect>({
-    url: `/system/menu/roleMenuTreeselect/${roleId}`,
+    url: `/system/menu/roleMenuTreeselect/${roleKey}`,
     method: 'get'
   });
 }

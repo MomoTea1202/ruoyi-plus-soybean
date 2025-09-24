@@ -925,7 +925,7 @@ declare namespace App {
             password: string;
             confirmPassword: string;
             sex: string;
-            roleIds: string;
+            roleKey: string;
             postIds: string;
             email: string;
             avatar: string;
@@ -939,7 +939,7 @@ declare namespace App {
               password: FormMsg;
               confirmPassword: FormMsg;
               sex: FormMsg;
-              roleIds: FormMsg;
+              roleKey: FormMsg;
               postIds: FormMsg;
               email: FormMsg;
               remark: FormMsg;

@@ -75,7 +75,7 @@ function createDefaultModel(): Model {
     sex: '0',
     password: '',
     status: '0',
-    roleIds: '',
+    roleKey: '',
     remark: '',
     menuIds: []
   };
@@ -96,7 +96,7 @@ async function getUserInfo() {
   startLoading();
   const { error, data } = await fetchGetUserInfo(props.rowData?.userId);
   if (!error) {
-    model.roleIds = data.roleIds;
+    model.roleKey = data.roleKey;
   }
   endLoading();
 }
@@ -129,7 +129,7 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
 
-  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleIds, remark } = model;
+  const { userId, userName, nickName, email, phonenumber, sex, password, status, roleKey, remark } = model;
   const menuIds = menuTreeRef.value?.getCheckedMenuIds();
 
   // request
@@ -142,7 +142,7 @@ async function handleSubmit() {
       phonenumber,
       sex,
       status,
-      roleIds,
+      roleKey,
       remark,
       menuIds
     });
@@ -158,7 +158,7 @@ async function handleSubmit() {
       phonenumber,
       sex,
       status,
-      roleIds,
+      roleKey,
       remark,
       menuIds
     });

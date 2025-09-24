@@ -46,19 +46,18 @@ export function fetchUpdateRoleDataScope(data: Api.System.RoleOperateParams) {
 }
 
 /** 批量删除角色信息 */
-export function fetchBatchDeleteRole(roleIds: CommonType.IdType[]) {
+export function fetchBatchDeleteRole(roleKeys: string[]) {
   return request<boolean>({
-    url: `/system/role/${roleIds.join(',')}`,
+    url: `/system/role/${roleKeys.join(',')}`,
     method: 'delete'
   });
 }
 
 /** 获取角色选择框列表 */
-export function fetchGetRoleSelect(roleIds?: CommonType.IdType[]) {
+export function fetchGetRoleSelect() {
   return request<Api.System.Role[]>({
     url: '/system/role/optionselect',
-    method: 'get',
-    params: { roleIds }
+    method: 'get'
   });
 }
 

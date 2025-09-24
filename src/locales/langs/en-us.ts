@@ -1069,7 +1069,7 @@ const local: App.I18n.Schema = {
         password: 'Password',
         confirmPassword: 'Confirm Password',
         sex: 'Gender',
-        roleIds: 'Roles',
+        roleKey: 'Role',
         postIds: 'Posts',
         email: 'Email',
         avatar: 'Avatar',
@@ -1107,7 +1107,7 @@ const local: App.I18n.Schema = {
             required: 'Please select Gender',
             invalid: 'Gender cannot be empty'
           },
-          roleIds: {
+          roleKey: {
             required: 'Please select Roles',
             invalid: 'Roles cannot be empty'
           },

@@ -14,7 +14,7 @@ interface Props {
 
 defineProps<Props>();
 
-const value = defineModel<CommonType.IdType[] | null>('value', { required: false });
+const value = defineModel<CommonType.IdType | null>('value', { required: false });
 
 const attrs: SelectProps = useAttrs();
 
@@ -30,7 +30,7 @@ async function getRoleOptions() {
   if (!error) {
     roleOptions.value = data.map(item => ({
       label: item.roleName,
-      value: item.roleId
+      value: item.roleKey
     }));
   }
   endRoleLoading();

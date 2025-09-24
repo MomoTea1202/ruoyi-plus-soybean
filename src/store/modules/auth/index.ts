@@ -32,7 +32,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
     return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE);
   });
-  const isSa = computed<boolean>(() => Number(userInfo.roles) === 1);
+  const isSa = computed<boolean>(() => userInfo.roles === 'SA');
 
   /** Is login */
   const isLogin = computed(() => Boolean(token.value));

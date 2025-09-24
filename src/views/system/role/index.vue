@@ -1,8 +1,7 @@
 <script setup lang="tsx">
-import { NDivider, NTag } from 'naive-ui';
+import { NDivider } from 'naive-ui';
 import { jsonClone } from '@sa/utils';
 import { useBoolean } from '@sa/hooks';
-import { dataScopeRecord } from '@/constants/business';
 import { fetchBatchDeleteRole, fetchGetRoleList, fetchUpdateRoleStatus } from '@/service/api/system/role';
 import { useAppStore } from '@/store/modules/app';
 import { useAuth } from '@/hooks/business/auth';
@@ -14,7 +13,6 @@ import ButtonIcon from '@/components/custom/button-icon.vue';
 import StatusSwitch from '@/components/custom/status-switch.vue';
 import RoleOperateDrawer from './modules/role-operate-drawer.vue';
 import RoleSearch from './modules/role-search.vue';
-import RoleDataScopeDrawer from './modules/role-data-scope-drawer.vue';
 import RoleAuthUserDrawer from './modules/role-auth-user-drawer.vue';
 
 defineOptions({
@@ -27,7 +25,6 @@ const { hasAuth } = useAuth();
 
 useDict('sys_normal_disable');
 
-const { bool: dataScopeDrawerVisible, setTrue: openDataScopeDrawer } = useBoolean(false);
 const { bool: authUserDrawerVisible, setTrue: openAuthUserDrawer } = useBoolean(false);
 const {
   columns,
@@ -64,32 +61,25 @@ const {
       width: 64
     },
     {
-      key: 'roleName',
-      title: '角色名称',
-      align: 'center',
-      minWidth: 120
-    },
-    {
       key: 'roleKey',
       title: '角色权限字符串',
       align: 'center',
       minWidth: 120
     },
     {
+      key: 'roleName',
+      title: '角色名称',
+      align: 'center',
+      minWidth: 120
+    },
+
+    {
       key: 'roleSort',
       title: '显示顺序',
       align: 'center',
       minWidth: 120
     },
-    {
-      key: 'dataScope',
-      title: '数据范围',
-      align: 'center',
-      minWidth: 180,
-      render: row => {
-        return <NTag type="info">{dataScopeRecord[row.dataScope]}</NTag>;
-      }
-    },
+
     {
       key: 'status',
       title: '角色状态',
@@ -99,7 +89,7 @@ const {
         return (
           <StatusSwitch
             v-model:value={row.status}
-            disabled={row.roleId === 1}
+            disabled={row.roleKey === 'SA'}
             info={row.roleKey}
             onSubmitted={(value, callback) => handleStatusChange(row, value, callback)}
           />
@@ -118,7 +108,7 @@ const {
       align: 'center',
       width: 230,
       render: row => {
-        if (row.roleId === 1) return null;
+        if (row.roleKey === 'SA') return null;
 
         const editBtn = () => {
           return (
@@ -127,19 +117,7 @@ const {
               type="primary"
               icon="material-symbols:drive-file-rename-outline-outline"
               tooltipContent={$t('common.edit')}
-              onClick={() => edit(row.roleId!)}
-            />
-          );
-        };
-
-        const dataScopeBtn = () => {
-          return (
-            <ButtonIcon
-              text
-              type="primary"
-              icon="material-symbols:database"
-              tooltipContent="数据范围权限"
-              onClick={() => handleDataScope(row)}
+              onClick={() => edit(row.roleKey!)}
             />
           );
         };
@@ -164,7 +142,7 @@ const {
               icon="material-symbols:delete-outline"
               tooltipContent={$t('common.delete')}
               popconfirmContent={$t('common.confirmDelete')}
-              onPositiveClick={() => handleDelete(row.roleId!)}
+              onPositiveClick={() => handleDelete(row.roleKey!)}
             />
           );
         };
@@ -172,7 +150,6 @@ const {
         const buttons = [];
         if (hasAuth('system:role:edit')) {
           buttons.push(editBtn());
-          buttons.push(dataScopeBtn());
           buttons.push(authUserBtn());
         }
         if (hasAuth('system:role:remove')) buttons.push(deleteBtn());
@@ -192,25 +169,20 @@ const {
   ]
 });
 
-const { drawerVisible, operateType, editingData, handleAdd, handleEdit, checkedRowKeys, onBatchDeleted, onDeleted } =
-  useTableOperate(data, getData);
+const { drawerVisible, operateType, editingData, handleAdd, handleEdit, checkedRowKeys, onDeleted } = useTableOperate(
+  data,
+  getData
+);
 
-async function handleBatchDelete() {
+async function handleDelete(roleKey: string) {
   // request
-  const { error } = await fetchBatchDeleteRole(checkedRowKeys.value);
-  if (error) return;
-  onBatchDeleted();
-}
-
-async function handleDelete(roleId: CommonType.IdType) {
-  // request
-  const { error } = await fetchBatchDeleteRole([roleId]);
+  const { error } = await fetchBatchDeleteRole([roleKey]);
   if (error) return;
   onDeleted();
 }
 
-async function edit(roleId: CommonType.IdType) {
-  handleEdit('roleId', roleId);
+async function edit(roleKey: string) {
+  handleEdit('roleKey', roleKey);
 }
 
 async function handleExport() {
@@ -224,7 +196,7 @@ async function handleStatusChange(
   callback: (flag: boolean) => void
 ) {
   const { error } = await fetchUpdateRoleStatus({
-    roleId: row.roleId,
+    roleKey: row.roleKey,
     status: value
   });
 
@@ -236,14 +208,8 @@ async function handleStatusChange(
   }
 }
 
-function handleDataScope(row: Api.System.Role) {
-  const findItem = data.value.find(item => item.roleId === row.roleId) || null;
-  editingData.value = jsonClone(findItem);
-  openDataScopeDrawer();
-}
-
 function handleAuthUser(row: Api.System.Role) {
-  const findItem = data.value.find(item => item.roleId === row.roleId) || null;
+  const findItem = data.value.find(item => item.roleKey === row.roleKey) || null;
   editingData.value = jsonClone(findItem);
   openAuthUserDrawer();
 }
@@ -262,7 +228,6 @@ function handleAuthUser(row: Api.System.Role) {
           :show-delete="hasAuth('system:role:remove')"
           :show-export="hasAuth('system:role:export')"
           @add="handleAdd"
-          @delete="handleBatchDelete"
           @export="handleExport"
           @refresh="getData"
         />
@@ -276,18 +241,13 @@ function handleAuthUser(row: Api.System.Role) {
         :scroll-x="962"
         :loading="loading"
         remote
-        :row-key="row => row.roleId"
+        :row-key="row => row.roleKey"
         :pagination="mobilePagination"
         class="sm:h-full"
       />
       <RoleOperateDrawer
         v-model:visible="drawerVisible"
         :operate-type="operateType"
-        :row-data="editingData"
-        @submitted="getDataByPage"
-      />
-      <RoleDataScopeDrawer
-        v-model:visible="dataScopeDrawerVisible"
         :row-data="editingData"
         @submitted="getDataByPage"
       />

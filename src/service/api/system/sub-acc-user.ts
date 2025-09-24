@@ -82,11 +82,11 @@ export function fetchGetAuthRole(userId: CommonType.IdType) {
 }
 
 /** 用户授权角色 */
-export function fetchAuthUserRole(userId: CommonType.IdType, roleIds: CommonType.IdType[]) {
+export function fetchAuthUserRole(userId: CommonType.IdType, roleKey: string) {
   return request<boolean>({
     url: '/system/subuser/authRole',
     method: 'put',
-    data: { userId, roleIds }
+    data: { userId, roleKey }
   });
 }
 

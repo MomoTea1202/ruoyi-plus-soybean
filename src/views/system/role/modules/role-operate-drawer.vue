@@ -60,16 +60,13 @@ function createDefaultModel(): Model {
     roleName: '',
     roleKey: '',
     roleSort: 1,
-    menuCheckStrictly: true,
-    status: '0',
-    remark: ''
+    status: '0'
   };
 }
 
-type RuleKey = Extract<keyof Model, 'roleId' | 'roleName' | 'roleKey' | 'status'>;
+type RuleKey = Extract<keyof Model, 'roleName' | 'roleKey' | 'status'>;
 
 const rules: Record<RuleKey, App.Global.FormRule> = {
-  roleId: createRequiredRule('角色ID不能为空'),
   roleName: createRequiredRule('角色名称不能为空'),
   roleKey: createRequiredRule('角色权限字符串不能为空'),
   status: createRequiredRule('角色状态不能为空')
@@ -88,7 +85,7 @@ async function handleUpdateModelWhenEdit() {
   if (props.operateType === 'edit' && props.rowData) {
     startMenuLoading();
     Object.assign(model, props.rowData);
-    const { data, error } = await fetchGetRoleMenuTreeSelect(model.roleId!);
+    const { data, error } = await fetchGetRoleMenuTreeSelect(model.roleKey!);
     if (error) return;
     model.menuIds = data.checkedKeys;
     menuOptions.value = data.menus;
@@ -102,7 +99,7 @@ function closeDrawer() {
 
 async function handleSubmit() {
   await validate();
-  const { roleId, roleName, roleKey, roleSort, menuCheckStrictly, status, remark } = model;
+  const { roleName, roleKey, roleSort, status } = model;
   const menuIds = menuTreeRef.value?.getCheckedMenuIds();
   // request
   if (props.operateType === 'add') {
@@ -110,9 +107,7 @@ async function handleSubmit() {
       roleName,
       roleKey,
       roleSort,
-      menuCheckStrictly,
       status,
-      remark,
       menuIds
     });
     if (error) return;
@@ -120,13 +115,10 @@ async function handleSubmit() {
 
   if (props.operateType === 'edit') {
     const { error } = await fetchUpdateRole({
-      roleId,
       roleName,
       roleKey,
       roleSort,
-      menuCheckStrictly,
       status,
-      remark,
       menuIds
     });
     if (error) return;
@@ -149,9 +141,6 @@ watch(visible, () => {
   <NDrawer v-model:show="visible" :title="title" display-directive="show" :width="800" class="max-w-90%">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem label="角色名称" path="roleName">
-          <NInput v-model:value="model.roleName" placeholder="请输入角色名称" />
-        </NFormItem>
         <NFormItem path="roleKey">
           <template #label>
             <div class="flex-center">
@@ -161,6 +150,11 @@ watch(visible, () => {
           </template>
           <NInput v-model:value="model.roleKey" placeholder="请输入权限字符" />
         </NFormItem>
+
+        <NFormItem label="角色名称" path="roleName">
+          <NInput v-model:value="model.roleName" placeholder="请输入角色名称" />
+        </NFormItem>
+
         <NFormItem label="显示顺序" path="roleSort">
           <NInputNumber v-model:value="model.roleSort" placeholder="请输入显示顺序" />
         </NFormItem>
@@ -175,13 +169,9 @@ watch(visible, () => {
             ref="menuTreeRef"
             v-model:checked-keys="model.menuIds"
             v-model:options="menuOptions"
-            v-model:cascade="model.menuCheckStrictly"
             v-model:loading="menuLoading"
             :immediate="operateType === 'add'"
           />
-        </NFormItem>
-        <NFormItem label="备注" path="remark">
-          <NInput v-model:value="model.remark" :rows="3" type="textarea" placeholder="请输入备注" />
         </NFormItem>
       </NForm>
       <template #footer>

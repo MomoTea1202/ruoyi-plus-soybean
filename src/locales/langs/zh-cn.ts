@@ -1067,7 +1067,7 @@ const local: App.I18n.Schema = {
         password: '密码',
         confirmPassword: '确认密码',
         sex: '性别',
-        roleIds: '角色',
+        roleKey: '角色',
         postIds: '岗位',
         email: '邮箱',
         avatar: '头像',
@@ -1105,7 +1105,7 @@ const local: App.I18n.Schema = {
             required: '请选择性别',
             invalid: '性别不能为空'
           },
-          roleIds: {
+          roleKey: {
             required: '请选择角色',
             invalid: '角色不能为空'
           },

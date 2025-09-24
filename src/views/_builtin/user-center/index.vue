@@ -162,7 +162,7 @@ async function updatePassword() {
           </NDescriptionsItem>
           <NDescriptionsItem label="所属角色">
             <NSpace>
-              <NTag v-for="role in userInfo.user?.roles" :key="role.roleId" type="primary" size="small">
+              <NTag v-for="role in userInfo.user?.roles" :key="role.roleKey" type="primary" size="small">
                 {{ role.roleName }}
               </NTag>
             </NSpace>
